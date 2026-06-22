@@ -220,20 +220,13 @@ namespace RoboSync
 
         private void Button_AllSyncClick(object sender, RoutedEventArgs e)
         {
-            foreach (var definition in Definitions)
-            {
-                selectedDefinition = definition;
-                DefinitionsListBox.SelectedItem = selectedDefinition;
-                FoldersDataGrid.ItemsSource = null;
-                FoldersDataGrid.ItemsSource = selectedDefinition.Folders;
-                DoSync();
-            }
+            DoSync(true);
         }
 
-        private void DoSync()
+        private void DoSync(bool bAll = false)
         {
             if (null == selectedDefinition) return;
-            GetCommands();
+            GetCommands(bAll);
 
             worker = new BackgroundWorker();
             worker.ProgressChanged += new ProgressChangedEventHandler(ProgressChanged);
@@ -244,21 +237,38 @@ namespace RoboSync
             worker.RunWorkerAsync();
         }
 
-        private void GetCommands(bool bFull = true)
+        private void GetCommands(bool bAll = false)
         {
             if (null == selectedDefinition) return;
-            string flags = bFull ? "" : "/M ";
+            string flags = ""; // "/M "
             flags += "/MIR /J /XJ /MT:" + Environment.ProcessorCount + " /R:0 /W:0 /NDL /NFL /NS /NC /NP";
             Progress.Value = 0;
             Progress2.Value = 0;
             commands.Clear();
             LogTextBox.Text = "";
-            foreach (var folder in selectedDefinition.Folders)
+            if (bAll)
             {
-                var output = selectedDefinition.Output + folder.Path.Split(':').Last();
-                if (folder.Include)
+                foreach (var definition in Definitions)
                 {
-                    commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
+                    foreach (var folder in definition.Folders)
+                    {
+                        var output = definition.Output + folder.Path.Split(':').Last();
+                        if (folder.Include)
+                        {
+                            commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (var folder in selectedDefinition.Folders)
+                {
+                    var output = selectedDefinition.Output + folder.Path.Split(':').Last();
+                    if (folder.Include)
+                    {
+                        commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
+                    }
                 }
             }
         }
@@ -363,6 +373,8 @@ namespace RoboSync
             bool bReady = null == process;
             StatusTextBlock.Text = bReady ? "Ready" : "Sync in progress";
             FullSyncButton.IsEnabled = bReady;
+            AllSyncButton.IsEnabled = bReady;
+            ClipboardButton.IsEnabled = bReady;
             AbortSyncButton.IsEnabled = !bReady;
         }
 
