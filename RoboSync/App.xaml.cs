@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace RoboBackup
+namespace RoboSync
 {
     /// <summary>
     /// Interaction logic for App.xaml

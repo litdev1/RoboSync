@@ -1,21 +1,22 @@
-﻿<Window x:Class="RoboBackup.MainWindow"
+﻿<Window x:Class="RoboSync.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RoboBackup"
+        xmlns:local="clr-namespace:RoboSync"
         mc:Ignorable="d"
-        Title="RoboBackup" Height="600" Width="1000" Closing="Window_Closing" Initialized="Window_Initialized">
+        Title="RoboSync" Height="600" Width="1000" Closing="Window_Closing" Initialized="Window_Initialized">
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10" HorizontalAlignment="Center">
-            <Button x:Name="FullBackupButton" Content=" Start Backup " HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_FullBackupClick"/>
-            <Button x:Name="DifferentialBackupButton" Visibility="Hidden" Content=" Differential Update " HorizontalAlignment="Right" Margin="105,0,0,0" VerticalAlignment="Center" Click="Button_DifferentialBackupClick"/>
-            <Button x:Name="AbortBackupButton" Content=" Abort Backup " HorizontalAlignment="Right" Margin="105,0,0,0" VerticalAlignment="Center" Click="Button_AbortBackupClick"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
+            <Button x:Name="FullSyncButton" Content=" Start Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_FullSyncClick" ToolTip="Start a sync copy"/>
+            <Button x:Name="AbortSyncButton" Content=" Abort Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" ToolTip="Abort current sync copy"/>
+            <Button x:Name="ClipboardButton" Content=" Batch Commands " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_BatchCommandsClick"
+                    ToolTip="Copy sync command(s) to clipboard for use in bat file"/>
         </StackPanel>
         <Separator Grid.Row="0" Margin="0,40,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
         <Grid Grid.Row="1">
@@ -28,8 +29,8 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" Margin="4">
                 <Label Content="Definitions" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                <Button Content=" Add " HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick"/>
-                <Button Content=" Delete " HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick"/>
+                <Button Content=" Add " HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
+                <Button Content=" Delete " HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
                 <ListBox x:Name="DefinitionsListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,31,0,0"
                          SelectionChanged="DefinitionsListBox_SelectionChanged">
                     <ListBox.ItemTemplate>
@@ -44,7 +45,7 @@
                 <Grid Margin="4" >
                     <Label Content="Output Folder" HorizontalAlignment="Left"/>
                     <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,0,54,0" TextChanged="OutputTextBox_TextChanged"/>
-                    <Button Content=" Browse " HorizontalAlignment="Right" Click="OnOutputBrowse"/>
+                    <Button Content=" Browse " HorizontalAlignment="Right" Click="OnOutputBrowse" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
                 <Label x:Name="DefinitionLabel" HorizontalAlignment="Center"/>
                 <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column">
@@ -55,7 +56,7 @@
                         <DataGridTemplateColumn Header="Browse">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Click="OnFolderBrowse">Browse</Button>
+                                    <Button Click="OnFolderBrowse" ToolTip="Browse to folder to sync">Browse</Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -64,9 +65,10 @@
             </StackPanel>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,40" 
-                       Text="Log messages" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"/>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="10,0,10,25" Height="10" VerticalAlignment="Bottom"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="10,0,10,10" Height="10" VerticalAlignment="Bottom"/>
+                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
+                     FontSize="11"/>
+            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress"/>
+            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress"/>
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBarItem HorizontalAlignment="Left">

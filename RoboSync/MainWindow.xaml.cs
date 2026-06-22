@@ -1,22 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using Timer = System.Timers.Timer;
 
-namespace RoboBackup
+namespace RoboSync
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,11 +16,11 @@ namespace RoboBackup
     {
         public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
 
-        private BackgroundWorker worker;
+        private BackgroundWorker? worker;
         private Definition? selectedDefinition = null;
         private Process? process = null;
         private List<Tuple<string, string, string>> commands = new List<Tuple<string, string, string>>();
-        private Tuple<string, string, string> command;
+        private Tuple<string, string, string>? command;
         private long size = 0;
         private long inSize = 0;
         private long outSize = 0;
@@ -38,7 +29,24 @@ namespace RoboBackup
         {
             InitializeComponent();
 
-            //LogTextBox.Text = "RoboBackup Log\nRoboBackup; ";
+            LogTextBox.Text = "Welcome to RoboSync - A simple backup file sync program\n\n" +
+                "A sync is a copy that keeps an exact copy, adding new or modified files\n" +
+                "It also deletes synced copies when they are no longer present in the source\n" +
+                "We use ROBOCOPY that is a very efficient Windows file copy method\n\n" +
+                "Step 1:\nBrowse to set an Output Folder location\n" +
+                "This will usually be a folder on an attached USB drive\n" +
+                "Ensure this location has sufficient space\n" +
+                "Ensure this location does not have other files present\n\n" +
+                "Steps 2:\nUse table Browse buttons to add source files to the table\n" +
+                "Size calculation is performed when a locaton is entered with Browse\n" +
+                "Locations may be deselected using Include tickbox\n\n" +
+                "Step 3:\nStart the sync - the first sync will take the longest\n" +
+                "Subsequent syncs will only modify changed files\n" +
+                "Check the progress report in this window for errors\n" +
+                "Also check the Output Folder files after the first run to be certain\n\n" +
+                "Multiple definitions may be used to sync different sets of folders\n" +
+                "The ROBOCOPY commands may be exported to clipboard for use directly\n" +
+                "Recommend closing other applications first - locked files are not copied";
         }
 
         private void Window_Initialized(object sender, EventArgs e)
@@ -61,7 +69,7 @@ namespace RoboBackup
                         if (folderParts.Length == 3)
                         {
                             //size = 0;
-                            //folderParts[2] = GetDirectorySize(folderParts[1]);
+                            //folderParts[2] = GetDirectorySize(folderParts[0]);
                             definition.Folders.Add(new Folder()
                             {
                                 Path = folderParts[0],
@@ -105,7 +113,7 @@ namespace RoboBackup
             }
             Properties.Settings.Default.Definitions = definitions;
             Properties.Settings.Default.Save();
-            EndBackup();
+            EndSync();
         }
         private void OnOutputBrowse(object sender, RoutedEventArgs e)
         {
@@ -123,6 +131,7 @@ namespace RoboBackup
 
         private void OnFolderBrowse(object sender, RoutedEventArgs e)
         {
+            if (null == selectedDefinition) return;
             Button btn = (Button)sender;
             Folder folder;
             if (btn.DataContext.GetType() == typeof(Folder))
@@ -175,6 +184,7 @@ namespace RoboBackup
 
         private void Button_DeleteClick(object sender, RoutedEventArgs e)
         {
+            if (null == selectedDefinition) return;
             var index = Definitions.IndexOf(selectedDefinition) - 1;
             Definitions.Remove(selectedDefinition);
             if (index < 0)
@@ -191,24 +201,34 @@ namespace RoboBackup
 
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (null == selectedDefinition) return;
             selectedDefinition.Output = OutputTextBox.Text;
         }
 
-        private void Button_FullBackupClick(object sender, RoutedEventArgs e)
+        private void Button_FullSyncClick(object sender, RoutedEventArgs e)
         {
-            DoBackup(true);
+            DoSync();
         }
 
-        private void Button_DifferentialBackupClick(object sender, RoutedEventArgs e)
+        private void DoSync()
         {
-            DoBackup(false);
+            if (null == selectedDefinition) return;
+            GetCommands();
+
+            worker = new BackgroundWorker();
+            worker.ProgressChanged += new ProgressChangedEventHandler(ProgressChanged);
+            worker.DoWork += new DoWorkEventHandler(DoWork);
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(WorkerCompleted);
+            worker.WorkerSupportsCancellation = true;
+            worker.WorkerReportsProgress = true;
+            worker.RunWorkerAsync();
         }
 
-        private void DoBackup(bool bFull)
+        private void GetCommands(bool bFull = true)
         {
+            if (null == selectedDefinition) return;
             string flags = bFull ? "" : "/M ";
-            flags += "/MIR /J /XJ /MT /R:1 /W:10";
-            /*if (bFull)*/ flags += " /NDL /NFL /NS /NC /NP";
+            flags += "/MIR /J /XJ /MT:" + Environment.ProcessorCount + " /R:0 /W:0 /NDL /NFL /NS /NC /NP";
             Progress.Value = 0;
             Progress2.Value = 0;
             commands.Clear();
@@ -221,18 +241,10 @@ namespace RoboBackup
                     commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
                 }
             }
-
-            worker = new BackgroundWorker();
-            worker.ProgressChanged += new ProgressChangedEventHandler(ProgressChanged);
-            worker.DoWork += new DoWorkEventHandler(DoWork);
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(WorkerCompleted);
-            worker.WorkerSupportsCancellation = true;
-            worker.WorkerReportsProgress = true;
-            worker.RunWorkerAsync();
         }
-
         private void DoWork(object? sender, DoWorkEventArgs e)
         {
+            if (null == worker) return;
             if (null == sender) return;
             Timer timer = new Timer();
             timer.Elapsed += new ElapsedEventHandler(DoTimer);
@@ -240,7 +252,6 @@ namespace RoboBackup
             foreach (var _command in commands)
             {
                 command = _command;
-                bool bFull = command.Item3.EndsWith("NP");
                 process = new Process();
                 Dispatcher.Invoke(() =>
                 {
@@ -286,6 +297,8 @@ namespace RoboBackup
 
         private void DoTimer(object? sender, ElapsedEventArgs e)
         {
+            if (null == command) return;
+            if (null == worker) return;
             size = 0;
             outSize = GetSize(command.Item2);
             int progress = (int)(100 * (double)outSize / (double)inSize);
@@ -299,16 +312,17 @@ namespace RoboBackup
 
         private void WorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
-            EndBackup();
+            EndSync();
         }
 
-        private void Button_AbortBackupClick(object sender, RoutedEventArgs e)
+        private void Button_AbortSyncClick(object sender, RoutedEventArgs e)
         {
+            if (null == worker) return;
             worker.CancelAsync();
-            EndBackup();
+            EndSync();
         }
 
-        private void EndBackup()
+        private void EndSync()
         {
             try
             {
@@ -327,11 +341,9 @@ namespace RoboBackup
         private void UpdateStatus()
         {
             bool bReady = null == process;
-            StatusTextBlock.Text = bReady ? "Ready" : "Backup in progress";
-            FullBackupButton.IsEnabled = bReady;
-            DifferentialBackupButton.IsEnabled = bReady;
-            AbortBackupButton.IsEnabled = !bReady;
-            //Cursor = bReady ? null : Cursors.Wait;
+            StatusTextBlock.Text = bReady ? "Ready" : "Sync in progress";
+            FullSyncButton.IsEnabled = bReady;
+            AbortSyncButton.IsEnabled = !bReady;
         }
 
         private string GetDirectorySize(string directory)
@@ -374,6 +386,18 @@ namespace RoboBackup
             {
             }
             return size;
+        }
+
+        private void Button_BatchCommandsClick(object sender, RoutedEventArgs e)
+        {
+            GetCommands();
+            string text = "";
+            foreach (var command in commands)
+            {
+                text += "ROBOCOPY \"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + "\n";
+            }
+            Clipboard.Clear();
+            Clipboard.SetText(text);
         }
     }
 
