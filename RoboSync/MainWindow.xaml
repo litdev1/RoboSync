@@ -15,6 +15,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
             <Button x:Name="FullSyncButton" Content=" Start Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_FullSyncClick" ToolTip="Start a sync copy"/>
             <Button x:Name="AbortSyncButton" Content=" Abort Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" ToolTip="Abort current sync copy"/>
+            <Button x:Name="AllSyncButton" Content=" Sync All " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" ToolTip="Sync all definitions"/>
             <Button x:Name="ClipboardButton" Content=" Batch Commands " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_BatchCommandsClick"
                     ToolTip="Copy sync command(s) to clipboard for use in bat file"/>
         </StackPanel>

@@ -5,6 +5,7 @@ using System.IO;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Timer = System.Timers.Timer;
 
 namespace RoboSync
@@ -163,13 +164,20 @@ namespace RoboSync
 
         private void DefinitionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Cursor = Cursors.Wait;
             ListBox listBox = (ListBox)sender;
             selectedDefinition = (Definition)listBox.SelectedItem;
             if (null == selectedDefinition) return;
+            foreach (var folder in selectedDefinition.Folders)
+            {
+                size = 0;
+                folder.Size = GetDirectorySize(folder.Path);
+            }
             FoldersDataGrid.ItemsSource = null;
             FoldersDataGrid.ItemsSource = selectedDefinition.Folders;
             DefinitionLabel.Content = selectedDefinition.Label;
             OutputTextBox.Text = selectedDefinition.Output;
+            Cursor = null;
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)
@@ -208,6 +216,18 @@ namespace RoboSync
         private void Button_FullSyncClick(object sender, RoutedEventArgs e)
         {
             DoSync();
+        }
+
+        private void Button_AllSyncClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var definition in Definitions)
+            {
+                selectedDefinition = definition;
+                DefinitionsListBox.SelectedItem = selectedDefinition;
+                FoldersDataGrid.ItemsSource = null;
+                FoldersDataGrid.ItemsSource = selectedDefinition.Folders;
+                DoSync();
+            }
         }
 
         private void DoSync()
