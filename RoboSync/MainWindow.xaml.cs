@@ -7,6 +7,18 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Timer = System.Timers.Timer;
+using System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential)]
+struct IO_COUNTERS
+{
+    public ulong ReadOperationCount;
+    public ulong WriteOperationCount;
+    public ulong OtherOperationCount;
+    public ulong ReadTransferCount;   // bytes read
+    public ulong WriteTransferCount;  // bytes written
+    public ulong OtherTransferCount;
+}
 
 namespace RoboSync
 {
@@ -21,10 +33,11 @@ namespace RoboSync
         private Definition? selectedDefinition = null;
         private Process? process = null;
         private List<Tuple<string, string, string>> commands = new List<Tuple<string, string, string>>();
-        private Tuple<string, string, string>? command;
+        private Tuple<string, string, string>? command = null;
         private long size = 0;
         private long inSize = 0;
         private long outSize = 0;
+        private long numError = 0;
 
         public MainWindow()
         {
@@ -46,6 +59,7 @@ namespace RoboSync
                 "Check the progress report in this window for errors\n" +
                 "Also check the Output Folder files after the first run to be certain\n\n" +
                 "Multiple definitions may be used to sync different sets of folders\n" +
+                "Progress calculations are approximate to keep performance optimal\n" +
                 "The ROBOCOPY commands may be exported to clipboard for use directly\n" +
                 "Recommend closing other applications first - locked files are not copied";
         }
@@ -272,13 +286,13 @@ namespace RoboSync
                 }
             }
         }
+
         private void DoWork(object? sender, DoWorkEventArgs e)
         {
             if (null == worker) return;
             if (null == sender) return;
-            Timer timer = new Timer();
-            timer.Elapsed += new ElapsedEventHandler(DoTimer);
             int i = 0;
+            numError = 0;
             foreach (var _command in commands)
             {
                 command = _command;
@@ -287,19 +301,21 @@ namespace RoboSync
                 {
                     Progress.Value = 0;
                     Progress2.Value = 100 * (i++ / (double)commands.Count);
+                    TimeProgressTextBox.Text = command.Item1;
                     UpdateStatus();
                 });
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.FileName = "ROBOCOPY";
-                process.OutputDataReceived += (s2, e2) =>
+                process.OutputDataReceived += (s, e) =>
                 {
-                    if (!string.IsNullOrEmpty(e2.Data))
+                    if (!string.IsNullOrEmpty(e.Data))
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            LogTextBox.AppendText(e2.Data + Environment.NewLine);
+                            if (e.Data.StartsWith("ERROR")) numError++;
+                            LogTextBox.AppendText(e.Data + Environment.NewLine);
                             LogTextBox.ScrollToEnd();
                         });
                     }
@@ -308,8 +324,14 @@ namespace RoboSync
                 size = 0;
                 inSize = GetSize(command.Item1);
 
-                timer.Interval = 1000 * Math.Min(10, Math.Max(1, inSize / 1024 / 1024 / 1024));
-                timer.Enabled = true;
+                Timer timer1 = new Timer();
+                timer1.Elapsed += new ElapsedEventHandler(DoTimer1);
+                timer1.Interval = 1000 * Math.Min(60, Math.Max(5, inSize / 1024.0 / 1024.0 / 1024.0));
+                timer1.Enabled = true;
+                Timer timer2 = new Timer();
+                timer2.Elapsed += new ElapsedEventHandler(DoTimer2);
+                timer2.Interval = 5000;
+                timer2.Enabled = true;
 
                 if (worker.CancellationPending) return;
                 process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3;
@@ -321,18 +343,69 @@ namespace RoboSync
                     Progress.Value = 100;
                     Progress2.Value = 100 * (i / (double)commands.Count);
                 });
-                timer.Enabled = false;
+                timer1.Enabled = false;
+                timer2.Enabled = false;
             }
+            command = null;
+            Dispatcher.Invoke(() =>
+            {
+                LogTextBox.AppendText(Environment.NewLine + "Completed with a total of " + numError + " errors detected" + Environment.NewLine);
+                LogTextBox.ScrollToEnd();
+            });
         }
 
-        private void DoTimer(object? sender, ElapsedEventArgs e)
+        private void DoTimer1(object? sender, ElapsedEventArgs e)
         {
             if (null == command) return;
             if (null == worker) return;
+            if (process == null) return; // guard against null Process
+
             size = 0;
             outSize = GetSize(command.Item2);
-            int progress = (int)(100 * (double)outSize / (double)inSize);
+
+            // avoid divide-by-zero if inSize is 0
+            int progress = inSize == 0 ? 0 : (int)(100 * (double)outSize / (double)inSize);
             worker.ReportProgress(progress);
+        }
+
+        private void DoTimer2(object? sender, ElapsedEventArgs e)
+        {
+            if (null == command) return;
+            if (null == worker) return;
+            if (process == null) return; // guard against null Process
+
+            try
+            {
+                var runTime = (DateTime.Now - process.StartTime);
+                var rates = IoSampler.SampleBytesAsync(process);
+                Dispatcher.Invoke(() =>
+                {
+                    var readB = rates.Item1;
+                    string readUnit = " kByte/s";
+                    if (readB > 1024)
+                    {
+                        readB /= 1024;
+                        readUnit = " MByte/s";
+                    }
+                    var writeB = rates.Item2;
+                    string writeUnit = " kByte/s";
+                    if (writeB > 1024)
+                    {
+                        writeB /= 1024;
+                        writeUnit = " MByte/s";
+                    }
+                    ReadProgressTextBox.Text = "\nRead = " + readB.ToString("0.#") + readUnit;
+                    WriteProgressTextBox.Text = "\nWrite = " + writeB.ToString("0.#") + writeUnit;
+                    long sec = (long)runTime.TotalSeconds;
+                    long min = sec / 60;
+                    long hour = min / 60;
+                    TimeProgressTextBox.Text = command.Item1 + "\n"+ hour.ToString("00") + ":" + (min % 60).ToString("00") + 
+                    ":" + (sec % 60).ToString("00") + " (H:M:S)";
+                });
+            }
+            catch
+            {
+            }
         }
 
         private void ProgressChanged(object? sender, ProgressChangedEventArgs e)
@@ -458,6 +531,29 @@ namespace RoboSync
             Folders = new ObservableCollection<Folder>();
             Label = string.Empty;
             Output = string.Empty;
+        }
+    }
+
+    public class IoSampler
+    {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool GetProcessIoCounters(IntPtr hProcess, out IO_COUNTERS ioCounters);
+
+        public static Tuple<double, double> SampleBytesAsync(Process proc, int intervalMs = 1000)
+        {
+            if (!GetProcessIoCounters(proc.Handle, out var start))
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+
+            Thread.Sleep(intervalMs);
+
+            if (!GetProcessIoCounters(proc.Handle, out var end))
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+
+            ulong readDelta = end.ReadTransferCount - start.ReadTransferCount;
+            ulong writeDelta = end.WriteTransferCount - start.WriteTransferCount;
+            double seconds = intervalMs / 1000.0;
+
+            return Tuple.Create(readDelta / seconds / 1024.0, writeDelta / seconds / 1024.0);
         }
     }
 }

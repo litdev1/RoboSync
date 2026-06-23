@@ -65,11 +65,16 @@
                 </DataGrid>
             </StackPanel>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,40" 
+            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,85" 
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
                      FontSize="11"/>
             <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress"/>
             <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress"/>
+            <Border BorderThickness="1" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,40" VerticalAlignment="Bottom" Height="40">
+                <TextBlock x:Name="ReadProgressTextBox" Text="" TextAlignment="Left" Margin="4"/>
+            </Border>
+            <TextBlock x:Name="WriteProgressTextBox" Grid.Column="4" Margin="8,4,8,44" Text="" VerticalAlignment="Bottom" TextAlignment="Right" Height="32"/>
+            <TextBlock x:Name="TimeProgressTextBox" Grid.Column="4" Margin="8,4,8,44" Text="" VerticalAlignment="Bottom" TextAlignment="Center" Height="32"/>
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBarItem HorizontalAlignment="Left">

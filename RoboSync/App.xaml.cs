@@ -9,6 +9,11 @@ namespace RoboSync
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            SplashScreen splash = new SplashScreen("RoboSync.png");
+            splash.Show(true, true);
+        }
     }
 
 }

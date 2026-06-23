@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SplashScreen Include="RoboSync.png" />
+    <Resource Include="RoboSync.png" />
   </ItemGroup>
 
   <ItemGroup>
