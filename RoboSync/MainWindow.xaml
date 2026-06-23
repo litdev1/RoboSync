@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RoboSync"
         mc:Ignorable="d"
-        Title="RoboSync" Height="600" Width="1000" Closing="Window_Closing" Initialized="Window_Initialized">
+        Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized">
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -53,7 +53,7 @@
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
-                        <DataGridTextColumn Header="Size" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True"/>
                         <DataGridTemplateColumn Header="Browse">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -67,9 +67,9 @@
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,85" 
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
-                     FontSize="11"/>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress"/>
+                     FontSize="10" FontFamily="Consolas"/>
+            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)"/>
+            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync"/>
             <Border BorderThickness="1" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,40" VerticalAlignment="Bottom" Height="40">
                 <TextBlock x:Name="ReadProgressTextBox" Text="" TextAlignment="Left" Margin="4"/>
             </Border>

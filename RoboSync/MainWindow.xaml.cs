@@ -51,7 +51,7 @@ namespace RoboSync
                 "This will usually be a folder on an attached USB drive\n" +
                 "Ensure this location has sufficient space\n" +
                 "Ensure this location does not have other files present\n\n" +
-                "Steps 2:\nUse table Browse buttons to add source files to the table\n" +
+                "Step 2:\nUse table Browse buttons to add source files to the table\n" +
                 "Size calculation is performed when a locaton is entered with Browse\n" +
                 "Locations may be deselected using Include tickbox\n\n" +
                 "Step 3:\nStart the sync - the first sync will take the longest\n" +
@@ -62,6 +62,13 @@ namespace RoboSync
                 "Progress calculations are approximate to keep performance optimal\n" +
                 "The ROBOCOPY commands may be exported to clipboard for use directly\n" +
                 "Recommend closing other applications first - locked files are not copied";
+
+            Properties.Settings.Default.Reload();
+            if (Properties.Settings.Default.WinState > 0) WindowState = (WindowState)Properties.Settings.Default.WinState;
+            if (Properties.Settings.Default.WinTop > 0) Top = Properties.Settings.Default.WinTop;
+            if (Properties.Settings.Default.WinLeft > 0) Left = Properties.Settings.Default.WinLeft;
+            if (Properties.Settings.Default.WinWidth > 0) Width = Properties.Settings.Default.WinWidth;
+            if (Properties.Settings.Default.WinHeight > 0) Height = Properties.Settings.Default.WinHeight;
         }
 
         private void Window_Initialized(object sender, EventArgs e)
@@ -83,13 +90,13 @@ namespace RoboSync
                         string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
                         if (folderParts.Length == 3)
                         {
-                            //size = 0;
-                            //folderParts[2] = GetDirectorySize(folderParts[0]);
+                            long size = 0;
+                            long.TryParse(folderParts[2], out size);
                             definition.Folders.Add(new Folder()
                             {
                                 Path = folderParts[0],
                                 Include = bool.Parse(folderParts[1]),
-                                Size = folderParts[2]
+                                Size = size
                             });
                         }
                     }
@@ -122,14 +129,21 @@ namespace RoboSync
                 definitions += definition.Output + "@";
                 foreach (Folder folder in definition.Folders)
                 {
-                    definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size + ";";
+                    definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size.ToString() + ";";
                 }
                 definitions += "#";
             }
             Properties.Settings.Default.Definitions = definitions;
+            Properties.Settings.Default.WinState = WindowState == WindowState.Minimized ? (int)WindowState.Normal : (int)WindowState;
+            Properties.Settings.Default.WinTop = Top;
+            Properties.Settings.Default.WinLeft = Left;
+            Properties.Settings.Default.WinWidth = Width;
+            Properties.Settings.Default.WinHeight = Height;
+
             Properties.Settings.Default.Save();
             EndSync();
         }
+
         private void OnOutputBrowse(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFolderDialog dialog = new();
@@ -451,26 +465,11 @@ namespace RoboSync
             AbortSyncButton.IsEnabled = !bReady;
         }
 
-        private string GetDirectorySize(string directory)
+        private long GetDirectorySize(string directory)
         {
             size = 0;
             size = GetSize(directory);
-            if (size < 1024)
-            {
-                return size.ToString() + " B";
-            }
-            else if (size < 1024 * 1024)
-            {
-                return (size / 1024).ToString() + " kB";
-            }
-            else if (size < 1024 * 1024 * 1024)
-            {
-                return (size / 1024 / 1024).ToString() + " MB";
-            }
-            else
-            {
-                return (size / 1024 / 1024 / 1024).ToString() + " GB";
-            }
+            return size / 1024 / 1024;
         }
 
         private long GetSize(string directory)
@@ -495,7 +494,7 @@ namespace RoboSync
 
         private void Button_BatchCommandsClick(object sender, RoutedEventArgs e)
         {
-            GetCommands();
+            GetCommands(true);
             string text = "";
             foreach (var command in commands)
             {
@@ -510,13 +509,13 @@ namespace RoboSync
     {
         public string Path { get; set; }
         public bool Include { get; set; }
-        public string Size { get; set; }
+        public long Size { get; set; }
 
         public Folder()
         {
             Path = string.Empty;
             Include = true;
-            Size = "0";
+            Size = 0;
         }
     }
 

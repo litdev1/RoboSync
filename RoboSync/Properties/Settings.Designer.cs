@@ -34,5 +34,65 @@ namespace RoboSync.Properties {
                 this["Definitions"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int WinState {
+            get {
+                return ((int)(this["WinState"]));
+            }
+            set {
+                this["WinState"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double WinTop {
+            get {
+                return ((double)(this["WinTop"]));
+            }
+            set {
+                this["WinTop"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double WinLeft {
+            get {
+                return ((double)(this["WinLeft"]));
+            }
+            set {
+                this["WinLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double WinWidth {
+            get {
+                return ((double)(this["WinWidth"]));
+            }
+            set {
+                this["WinWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public double WinHeight {
+            get {
+                return ((double)(this["WinHeight"]));
+            }
+            set {
+                this["WinHeight"] = value;
+            }
+        }
     }
 }
