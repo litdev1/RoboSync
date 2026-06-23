@@ -43,12 +43,12 @@
             </Grid>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <StackPanel Grid.Column="2" >
-                <Grid Margin="4" >
-                    <Label Content="Output Folder" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,0,54,0" TextChanged="OutputTextBox_TextChanged"/>
-                    <Button Content=" Browse " HorizontalAlignment="Right" Click="OnOutputBrowse" ToolTip="Browse to set the output location where copied files will be saved"/>
+                <Grid Margin="4" Height="30" >
+                    <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                    <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
+                    <Button Content=" Browse " HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
-                <Label x:Name="DefinitionLabel" HorizontalAlignment="Center"/>
+                <Label x:Name="DefinitionLabel" Margin="0,4,0,4" HorizontalAlignment="Center"/>
                 <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>

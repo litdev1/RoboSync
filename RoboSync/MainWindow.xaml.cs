@@ -53,7 +53,8 @@ namespace RoboSync
                 "Ensure this location does not have other files present\n\n" +
                 "Step 2:\nUse table Browse buttons to add source files to the table\n" +
                 "Size calculation is performed when a locaton is entered with Browse\n" +
-                "Locations may be deselected using Include tickbox\n\n" +
+                "Locations may be deselected using Include tickbox\n" +
+                "Delete a location by selecting the table row and pressing delete key\n\n" +
                 "Step 3:\nStart the sync - the first sync will take the longest\n" +
                 "Subsequent syncs will only modify changed files\n" +
                 "Check the progress report in this window for errors\n" +
