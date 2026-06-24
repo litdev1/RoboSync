@@ -33,7 +33,7 @@
                 <Button Content=" Add " HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
                 <Button Content=" Delete " HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
                 <ListBox x:Name="DefinitionsListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,31,0,0"
-                         SelectionChanged="DefinitionsListBox_SelectionChanged">
+                         SelectionChanged="DefinitionsListBox_SelectionChanged" LostFocus="DefinitionsListBox_LostFocus">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding Label}" HorizontalAlignment="Left" VerticalContentAlignment="Center" />

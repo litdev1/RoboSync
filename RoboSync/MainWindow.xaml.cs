@@ -209,6 +209,13 @@ namespace RoboSync
             Cursor = null;
         }
 
+        private void DefinitionsListBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ListBox listBox = (ListBox)sender;
+            selectedDefinition = (Definition)listBox.SelectedItem;
+            DefinitionLabel.Content = selectedDefinition.Label;
+        }
+
         private void Button_AddClick(object sender, RoutedEventArgs e)
         {
             Definitions.Add(new Definition() { Label = "Definition " + (Definitions.Count + 1) });
