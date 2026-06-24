@@ -1,5 +1,9 @@
-﻿using System.Configuration;
+﻿using Microsoft.Win32;
+using System.Configuration;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 
 namespace RoboSync
@@ -9,17 +13,23 @@ namespace RoboSync
     /// </summary>
     public partial class App : Application
     {
+        public static bool bHidden = false;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             for (int i = 0; i != e.Args.Length; ++i)
             {
-                if (e.Args[i] == "/RunAll")
+                if (e.Args[i] == "/hide")
                 {
+                    bHidden = true;
                 }
             }
 
-            SplashScreen splash = new SplashScreen("RoboSync.png");
-            splash.Show(true, true);
+            if (!bHidden)
+            {
+                SplashScreen splash = new SplashScreen("RoboSync.png");
+                splash.Show(true, true);
+            }
         }
     }
 
