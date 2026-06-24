@@ -6,6 +6,71 @@
         xmlns:local="clr-namespace:RoboSync" d:DataContext="{d:DesignInstance Type=local:SyncViewModel}"
         mc:Ignorable="d"
         Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized" Loaded="Window_Loaded">
+    <Window.Resources>
+        <!--
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5588CC"/>
+        <LinearGradientBrush x:Key="GardientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0000AA" Offset="0"/>
+            <GradientStop Color="#8888FF" Offset="0.5"/>
+            <GradientStop Color="#0000AA" Offset="1"/>
+        </LinearGradientBrush>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource GardientBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" ClipToBounds="True">
+                            <Rectangle HorizontalAlignment="Stretch"    
+                                        VerticalAlignment="Stretch"    
+                                        Fill="{TemplateBinding Background}"    
+                                        RadiusX="4" RadiusY="4"   />
+                            <DockPanel>
+                                <ContentPresenter Margin="2"    
+                                        Content="{TemplateBinding  Content}"    
+                                        TextBlock.Foreground="White" />
+                            </DockPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        -->
+        <Style TargetType="Button">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="ToolTip">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="TextBox">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+        <Style TargetType="ListView">
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="3"/>
+                </Style>
+            </Style.Resources>
+        </Style>
+    </Window.Resources> 
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -29,27 +94,42 @@
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" Margin="4">
-                <Label Content="Definitions" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="47,0,60,0"/>
-                <Button Content=" Add " HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
-                <Button Content=" Delete " HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
-                <ListBox x:Name="DefinitionsListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,31,0,0"
-                         SelectionChanged="DefinitionsListBox_SelectionChanged" LostFocus="DefinitionsListBox_LostFocus">
-                    <ListBox.ItemTemplate>
+                <Label Content="Definitions" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="60,0,65,0"/>
+                <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
+                <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
+                <ListView x:Name="DefinitionsListView" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,31,0,0"
+                         SelectionChanged="DefinitionsListView_SelectionChanged" LostFocus="DefinitionsListView_LostFocus">
+                    <!--
+                    <ListView.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                    </ListView.Resources>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                            </Style.Resources>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    -->
+                    <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding Label}" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ListView.ItemTemplate>
+                </ListView>
             </Grid>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
             <StackPanel Grid.Column="2" >
                 <Grid Margin="4" Height="30" >
                     <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
                     <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
-                    <Button Content=" Browse " HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
+                    <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
                 <Label x:Name="DefinitionLabel" Margin="0,4,0,4" HorizontalContentAlignment="Center"/>
-                <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column">
+                <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                    </DataGrid.Resources>
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
@@ -57,7 +137,7 @@
                         <DataGridTemplateColumn Header="Browse">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Click="OnFolderBrowse" ToolTip="Browse to folder to sync">Browse</Button>
+                                    <Button Click="OnFolderBrowse" Content="Browse" Width="50" ToolTip="Browse to folder to sync"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -70,7 +150,7 @@
                      FontSize="11" FontFamily="Consolas"/>
             <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)"/>
             <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync"/>
-            <Border BorderThickness="1" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,40" VerticalAlignment="Bottom" Height="40">
+            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,40" VerticalAlignment="Bottom" Height="40">
                 <TextBlock x:Name="ReadProgressTextBox" Text="" TextAlignment="Left" Margin="4"/>
             </Border>
             <TextBlock x:Name="WriteProgressTextBox" Grid.Column="4" Margin="8,4,8,44" Text="" VerticalAlignment="Bottom" TextAlignment="Right" Height="32"/>

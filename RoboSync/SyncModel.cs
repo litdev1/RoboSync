@@ -144,6 +144,12 @@ namespace RoboSync
                 timer2.Interval = 5000;
                 timer2.Enabled = true;
 
+                if (worker.CancellationPending)
+                {
+                    timer1.Enabled = false;
+                    timer2.Enabled = false;
+                    return;
+                }
                 process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3;
                 process.Start();
                 process.BeginOutputReadLine();
@@ -152,7 +158,6 @@ namespace RoboSync
                 Progress2 = (int)(100 * (i / (double)commands.Count));
                 timer1.Enabled = false;
                 timer2.Enabled = false;
-                if (worker.CancellationPending) return;
             }
             command = null;
             LogLine = Environment.NewLine + "Completed with a total of " + numError + " errors detected";

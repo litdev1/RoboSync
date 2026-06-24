@@ -55,16 +55,18 @@ namespace RoboSync
                     case "SelectedDefinition":
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
                         SelectedDefinition = syncViewModel.SelectedDefinition;
-                        DefinitionsListBox.SelectedItem = SelectedDefinition;
+                        DefinitionsListView.SelectedItem = SelectedDefinition;
                         DefinitionLabel.Content = SelectedDefinition?.Label;
                         OutputTextBox.Text = SelectedDefinition?.Output;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
                         if (null == SelectedDefinition) return;
+                        Cursor = Cursors.Wait;
                         foreach (var folder in SelectedDefinition.Folders)
                         {
                             folder.Size = Dir.GetSize(folder.Path) / 1024 / 1024;
                         }
+                        Cursor = null;
                         break;
                     case "Progress1":
                         Progress.Value = syncViewModel.Progress1;
@@ -103,7 +105,7 @@ namespace RoboSync
             if (Properties.Settings.Default.WinHeight > 0) Height = Properties.Settings.Default.WinHeight;
 
             Definitions.Clear();
-            DefinitionsListBox.ItemsSource = Definitions;
+            DefinitionsListView.ItemsSource = Definitions;
 
             syncViewModel = new SyncViewModel(Definitions);
             syncViewModel.PropertyChanged += ViewModelPropertyChanged;
@@ -178,18 +180,18 @@ namespace RoboSync
             FoldersDataGrid.ItemsSource = SelectedDefinition.Folders;
         }
 
-        private void DefinitionsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DefinitionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Cursor = Cursors.Wait;
-            ListBox listBox = (ListBox)sender;
-            syncViewModel.SelectedDefinition = (Definition)listBox.SelectedItem;
+            ListView listView = (ListView)sender;
+            syncViewModel.SelectedDefinition = (Definition)listView.SelectedItem;
             Cursor = null;
         }
 
-        private void DefinitionsListBox_LostFocus(object sender, RoutedEventArgs e)
+        private void DefinitionsListView_LostFocus(object sender, RoutedEventArgs e)
         {
-            ListBox listBox = (ListBox)sender;
-            DefinitionLabel.Content = ((Definition)listBox.SelectedItem).Label;
+            ListView listView = (ListView)sender;
+            DefinitionLabel.Content = ((Definition)listView.SelectedItem).Label;
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)
