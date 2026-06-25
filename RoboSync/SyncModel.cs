@@ -232,7 +232,7 @@ namespace RoboSync
                     process.Kill();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
             process = null;

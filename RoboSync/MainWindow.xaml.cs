@@ -119,32 +119,45 @@ namespace RoboSync
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(key, true);
-            string assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            string executableName = "\"" + Process.GetCurrentProcess().MainModule.FileName + "\" /Background";
-            //var keyValue = registryKey.GetValue(assemblyName);
-            if (App.IsStartup)
-            { 
-                registryKey.SetValue(assemblyName, executableName);
-            }
-            else
+            try
             {
-                registryKey.DeleteValue(assemblyName, false);
-            }
+                var module = Process.GetCurrentProcess().MainModule;
+                if (null != module)
+                {
+                    string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+                    RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(key, true);
+                    string? assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+                    string? executableName = "\"" + module.FileName + "\" /Background";
+                    //var keyValue = registryKey.GetValue(assemblyName);
+                    if (null != assemblyName)
+                    {
+                        if (App.IsStartup)
+                        {
+                            registryKey?.SetValue(assemblyName, executableName);
+                        }
+                        else
+                        {
+                            registryKey?.DeleteValue(assemblyName, false);
+                        }
+                    }
+                }
 
-            if (App.IsSysTray)
-            {
-                var wih = new System.Windows.Interop.WindowInteropHelper(this);
-                var hWnd = wih.Handle;
-                NotifyIcon.Create(wih.Handle);
-                //ShowInTaskbar = false;
-                //WindowState = WindowState.Minimized;
-            }
+                if (App.IsSysTray)
+                {
+                    var wih = new System.Windows.Interop.WindowInteropHelper(this);
+                    var hWnd = wih.Handle;
+                    NotifyIcon.Create(wih.Handle);
+                    //ShowInTaskbar = false;
+                    //WindowState = WindowState.Minimized;
+                }
 
-            if (App.IsMinimised)
+                if (App.IsMinimised)
+                {
+                    WindowState = WindowState.Minimized;
+                }
+            }
+            catch (Exception)
             {
-                WindowState = WindowState.Minimized;
             }
         }
 
