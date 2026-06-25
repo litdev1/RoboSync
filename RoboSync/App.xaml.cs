@@ -13,22 +13,19 @@ namespace RoboSync
     /// </summary>
     public partial class App : Application
     {
-        public static bool bHidden = false;
+        public static bool IsStartup = false;
+        public static bool IsSysTray = false;
+        public static bool IsFastStart = false;
+        public static bool IsMinimised = false;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             for (int i = 0; i != e.Args.Length; ++i)
             {
-                if (e.Args[i] == "/hide")
-                {
-                    bHidden = true;
-                }
-            }
-
-            if (!bHidden)
-            {
-                SplashScreen splash = new SplashScreen("RoboSync.png");
-                splash.Show(true, true);
+                IsStartup |= e.Args[i].ToUpper().StartsWith("/S");
+                IsSysTray |= e.Args[i].ToUpper().StartsWith("/T");
+                IsFastStart |= e.Args[i].ToUpper().StartsWith("/F");
+                IsMinimised |= e.Args[i].ToUpper().StartsWith("/M");
             }
         }
     }

@@ -35,56 +35,77 @@
             </Setter>
         </Style>
         -->
+
         <Style TargetType="Button">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
+            <Setter Property="Background" Value="LightBlue" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Gray" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value ="#3388AA" />
+                    <Setter Property="Foreground" Value ="White" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Background" Value ="LightGray" />
+                    <Setter Property="Foreground" Value ="Black" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Style TargetType="ToolTip">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
         </Style>
         <Style TargetType="TextBox">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
         </Style>
         <Style TargetType="DataGrid">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
         </Style>
-        <Style TargetType="ListView">
+        <Style TargetType="Label">
             <Style.Resources>
                 <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="3"/>
+                    <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
         </Style>
-    </Window.Resources> 
-    <Grid Margin="0">
+    </Window.Resources>
+    <Grid Margin="0" Background="AliceBlue">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
-            <Button x:Name="FullSyncButton" Content=" Start Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_FullSyncClick" ToolTip="Start a sync copy"/>
-            <Button x:Name="AbortSyncButton" Content=" Abort Sync " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" ToolTip="Abort current sync copy"/>
-            <Button x:Name="AllSyncButton" Content=" Sync All " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" ToolTip="Sync all definitions"/>
-            <Button x:Name="ClipboardButton" Content=" Batch Commands " Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_BatchCommandsClick"
+            <Button x:Name="FullSyncButton" Content="Start Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_FullSyncClick" Width="75" ToolTip="Start a sync copy"/>
+            <Button x:Name="AllSyncButton" Content="Sync All" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" Width="75" ToolTip="Sync all definitions"/>
+            <Button x:Name="AbortSyncButton" Content="Abort Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" Width="75" ToolTip="Abort current sync copy"/>
+            <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
                     ToolTip="Copy sync command(s) to clipboard for use in bat file"/>
         </StackPanel>
-        <Separator Grid.Row="0" Margin="0,40,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
@@ -93,43 +114,53 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Margin="4">
-                <Label Content="Definitions" HorizontalContentAlignment="Center" VerticalAlignment="Top" Margin="60,0,65,0"/>
-                <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
-                <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
-                <ListView x:Name="DefinitionsListView" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0,31,0,0"
-                         SelectionChanged="DefinitionsListView_SelectionChanged" LostFocus="DefinitionsListView_LostFocus">
-                    <!--
-                    <ListView.Resources>
+            <StackPanel Grid.Column="0">
+                <Grid Margin="4" Height="30" >
+                    <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
+                    <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
+                </Grid>
+
+                <DataGrid x:Name="DefinitionsDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
+                          SelectionChanged="DefinitionsDataGrid_SelectionChanged" LostFocus="DefinitionsDataGrid_LostFocus">
+                    <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
-                    </ListView.Resources>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Style.Resources>
-                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
-                            </Style.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#3388AA"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                    </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Background" Value="Transparent"/>
                         </Style>
-                    </ListView.ItemContainerStyle>
-                    -->
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding Label}" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Definitions" Binding="{Binding Label}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,0"/>
+            </StackPanel>
+            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="LightBlue"/>
             <StackPanel Grid.Column="2" >
                 <Grid Margin="4" Height="30" >
                     <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
                     <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
                     <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
-                <Label x:Name="DefinitionLabel" Margin="0,4,0,4" HorizontalContentAlignment="Center"/>
+                <Label x:Name="DefinitionLabel" Margin="4" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
                     </DataGrid.Resources>
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
@@ -144,19 +175,25 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
-            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
-            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,85"
+            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="LightBlue"/>
+            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,87"
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
                      FontSize="11" FontFamily="Consolas"/>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,25" Height="10" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,10" Height="10" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync"/>
-            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,40" VerticalAlignment="Bottom" Height="40">
+            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40" Background="White">
                 <TextBlock x:Name="ReadProgressTextBox" Text="" TextAlignment="Left" Margin="4"/>
             </Border>
-            <TextBlock x:Name="WriteProgressTextBox" Grid.Column="4" Margin="8,4,8,44" Text="" VerticalAlignment="Bottom" TextAlignment="Right" Height="32"/>
-            <TextBlock x:Name="TimeProgressTextBox" Grid.Column="4" Margin="8,4,8,44" Text="" VerticalAlignment="Bottom" TextAlignment="Center" Height="32"/>
+            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
+                <TextBlock x:Name="WriteProgressTextBox" Text="" TextAlignment="Right" Margin="4"/>
+            </Border>
+            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
+                <TextBlock x:Name="TimeProgressTextBox" Text="" TextAlignment="Center" Margin="4"/>
+            </Border>
+            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#3388AA"/>
+            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#3388AA"/>
         </Grid>
-        <StatusBar Grid.Row="2">
+        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="LightBlue"/>
+        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightBlue"/>
+        <StatusBar Grid.Row="2" Background="AliceBlue">
             <StatusBarItem HorizontalAlignment="Left">
                 <TextBlock x:Name="StatusTextBlock" Text=""/>
             </StatusBarItem>

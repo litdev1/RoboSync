@@ -19,11 +19,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="RoboSync.iss" />
     <None Remove="RoboSync.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="RoboSync.ico" />
+    <Content Include="RoboSync.iss" />
   </ItemGroup>
 
   <ItemGroup>

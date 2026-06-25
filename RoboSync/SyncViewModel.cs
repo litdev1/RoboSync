@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Windows;
 
 namespace RoboSync
@@ -96,14 +97,14 @@ namespace RoboSync
                 "We use ROBOCOPY that is a very efficient Windows file copy method\n\n" +
                 "Step 1:\nBrowse to set an Output Folder location\n" +
                 "This will usually be a folder on an attached USB drive\n" +
-                "Ensure this location has sufficient space\n" +
-                "Ensure this location does not have other files that could be modified\n\n" +
-                "Step 2:\nUse table Browse buttons to add source files to the table\n" +
-                "Size calculation is performed when a locaton is entered with Browse\n" +
-                "Locations may be deselected using Include tickbox\n" +
-                "Delete a location by selecting the table row and pressing delete key\n\n" +
+                "Ensure this location has sufficient space and doesn't contain other files\n" +
+                "(that could be modified or deleted)\n\n" +
+                "Step 2:\nUse the table Browse buttons to add source files to the table\n" +
+                "A size calculation is performed when a locaton is entered with Browse\n" +
+                "Locations may be de-selected using the Include tickbox\n" +
+                "Delete a location by selecting the table row and pressing the Delete key\n\n" +
                 "Step 3:\nStart the sync - the first sync will take the longest\n" +
-                "Subsequent syncs will only modify changed files\n" +
+                "Subsequent syncs will only modify updated files\n" +
                 "Check the progress report in this window for errors\n" +
                 "Also check the Output Folder files after the first run to be certain\n\n" +
                 "Multiple definitions may be used to sync different sets of folders\n" +
@@ -323,6 +324,68 @@ namespace RoboSync
             {
             }
             return size;
+        }
+    }
+
+    public static class NotifyIcon
+    {
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        public static extern bool Shell_NotifyIcon(int dwMessage, NOTIFYICONDATA lpData);
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int NIM_ADD = 0x00000000;
+        const int NIM_DELETE = 0x00000002;
+        const int NIF_MESSAGE = 0x00000001;
+        const int NIF_ICON = 0x00000002;
+        const int NIF_TIP = 0x00000004;
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct NOTIFYICONDATA
+        {
+            public int cbSize;
+            public IntPtr hWnd;
+            public int uID;
+            public int uFlags;
+            public int uCallbackMessage;
+            public IntPtr hIcon;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szTip;
+        }
+
+        public static void Create(IntPtr hWnd)
+        {
+            Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
+
+            NOTIFYICONDATA nid = new NOTIFYICONDATA();
+            nid.cbSize = Marshal.SizeOf(nid);
+            nid.hWnd = hWnd;
+            nid.uID = 1;
+            nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+            nid.uCallbackMessage = 0x8000;
+            nid.hIcon = icon.Handle;
+            nid.szTip = "";
+
+            Shell_NotifyIcon(NIM_ADD, nid);
+        }
+
+        public static void Delete()
+        {
+            Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
+
+            NOTIFYICONDATA nid = new NOTIFYICONDATA();
+            nid.cbSize = Marshal.SizeOf(nid);
+            nid.hWnd = GetConsoleWindow();
+            nid.uID = 1;
+            nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+            nid.uCallbackMessage = 0x8000;
+            nid.hIcon = icon.Handle;
+            nid.szTip = "";
+
+            Shell_NotifyIcon(NIM_DELETE, nid);
         }
     }
 }

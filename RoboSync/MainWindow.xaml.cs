@@ -1,9 +1,12 @@
 ﻿using Microsoft.Win32;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows;
@@ -25,17 +28,13 @@ namespace RoboSync
 
         public MainWindow()
         {
-            InitializeComponent();
-
-            //RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            //string assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            //string executableName = "\"" + Process.GetCurrentProcess().MainModule.FileName + "\" /hide";
-            //registryKey.SetValue(assemblyName, executableName);
-
-            if (App.bHidden)
+            if (!App.IsFastStart)
             {
-                Visibility = Visibility.Hidden;
+                SplashScreen splash = new SplashScreen("RoboSync.png");
+                splash.Show(true, true);
             }
+
+            InitializeComponent();
         }
 
         private void ViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -55,12 +54,16 @@ namespace RoboSync
                     case "SelectedDefinition":
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
                         SelectedDefinition = syncViewModel.SelectedDefinition;
-                        DefinitionsListView.SelectedItem = SelectedDefinition;
+                        DefinitionsDataGrid.SelectedItem = SelectedDefinition;
                         DefinitionLabel.Content = SelectedDefinition?.Label;
                         OutputTextBox.Text = SelectedDefinition?.Output;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
-                        if (null == SelectedDefinition) return;
+                        if (null == SelectedDefinition || App.IsFastStart)
+                        {
+                            App.IsFastStart = false;
+                            return;
+                        }
                         Cursor = Cursors.Wait;
                         foreach (var folder in SelectedDefinition.Folders)
                         {
@@ -103,9 +106,11 @@ namespace RoboSync
             if (Properties.Settings.Default.WinLeft > 0) Left = Properties.Settings.Default.WinLeft;
             if (Properties.Settings.Default.WinWidth > 0) Width = Properties.Settings.Default.WinWidth;
             if (Properties.Settings.Default.WinHeight > 0) Height = Properties.Settings.Default.WinHeight;
+            if (Width < 200) Width = 1200;
+            if (Height < 100) Height = 800;
 
             Definitions.Clear();
-            DefinitionsListView.ItemsSource = Definitions;
+            DefinitionsDataGrid.ItemsSource = Definitions;
 
             syncViewModel = new SyncViewModel(Definitions);
             syncViewModel.PropertyChanged += ViewModelPropertyChanged;
@@ -114,7 +119,33 @@ namespace RoboSync
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(key, true);
+            string assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            string executableName = "\"" + Process.GetCurrentProcess().MainModule.FileName + "\" /Background";
+            //var keyValue = registryKey.GetValue(assemblyName);
+            if (App.IsStartup)
+            { 
+                registryKey.SetValue(assemblyName, executableName);
+            }
+            else
+            {
+                registryKey.DeleteValue(assemblyName, false);
+            }
 
+            if (App.IsSysTray)
+            {
+                var wih = new System.Windows.Interop.WindowInteropHelper(this);
+                var hWnd = wih.Handle;
+                NotifyIcon.Create(wih.Handle);
+                //ShowInTaskbar = false;
+                //WindowState = WindowState.Minimized;
+            }
+
+            if (App.IsMinimised)
+            {
+                WindowState = WindowState.Minimized;
+            }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -180,18 +211,18 @@ namespace RoboSync
             FoldersDataGrid.ItemsSource = SelectedDefinition.Folders;
         }
 
-        private void DefinitionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DefinitionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Cursor = Cursors.Wait;
-            ListView listView = (ListView)sender;
-            syncViewModel.SelectedDefinition = (Definition)listView.SelectedItem;
+            DataGrid dataGrid = (DataGrid)sender;
+            syncViewModel.SelectedDefinition = (Definition)dataGrid.SelectedItem;
             Cursor = null;
         }
 
-        private void DefinitionsListView_LostFocus(object sender, RoutedEventArgs e)
+        private void DefinitionsDataGrid_LostFocus(object sender, RoutedEventArgs e)
         {
-            ListView listView = (ListView)sender;
-            DefinitionLabel.Content = ((Definition)listView.SelectedItem).Label;
+            DataGrid dataGrid = (DataGrid)sender;
+            DefinitionLabel.Content = ((Definition)dataGrid.SelectedItem).Label;
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)

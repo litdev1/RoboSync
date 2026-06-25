@@ -59,5 +59,15 @@ namespace RoboSync.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] RoboSync {
+            get {
+                object obj = ResourceManager.GetObject("RoboSync", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

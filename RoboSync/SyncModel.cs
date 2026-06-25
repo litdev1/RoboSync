@@ -160,7 +160,7 @@ namespace RoboSync
                 timer2.Enabled = false;
             }
             command = null;
-            LogLine = Environment.NewLine + "Completed with a total of " + numError + " errors detected";
+            LogLine = Environment.NewLine + (worker.CancellationPending ? "Aborted" : "Completed") + " with a total of " + numError + " errors detected";
         }
 
         private void DoTimer1(object? sender, ElapsedEventArgs e)
