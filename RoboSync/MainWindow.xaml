@@ -130,6 +130,7 @@
                     </DataGrid.Resources>
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Margin" Value="2"/>
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="Background" Value="Transparent"/>
@@ -156,6 +157,7 @@
                     </DataGrid.Resources>
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="Margin" Value="2"/>
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="Background" Value="Transparent"/>

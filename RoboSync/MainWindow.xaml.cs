@@ -1,18 +1,14 @@
 ﻿using Microsoft.Win32;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Timer = System.Timers.Timer;
+using System.Windows.Media;
 
 namespace RoboSync
 {
@@ -178,7 +174,7 @@ namespace RoboSync
             Microsoft.Win32.OpenFolderDialog dialog = new();
             dialog.Multiselect = false;
             dialog.Title = "Select an output folder";
-            dialog.InitialDirectory = OutputTextBox.Text;
+            if (Directory.Exists(OutputTextBox.Text)) dialog.InitialDirectory = OutputTextBox.Text;
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
@@ -188,8 +184,29 @@ namespace RoboSync
 
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (null == SelectedDefinition) return;
+            if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
             SelectedDefinition.Output = OutputTextBox.Text;
+            var drive = SelectedDefinition.Output.ToUpper().Substring(0, 1);
+            if (drive == "C" || !IsReadyDrive(drive))
+            {
+                OutputTextBox.Foreground = new SolidColorBrush(Colors.Red);
+            }
+            else
+            {
+                OutputTextBox.Foreground = Directory.Exists(OutputTextBox.Text) ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.Blue);
+            }
+        }
+
+        private bool IsReadyDrive(string driveLetter)
+        {
+            try
+            {
+                return new DriveInfo(driveLetter).IsReady;
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
         }
 
         private void OnFolderBrowse(object sender, RoutedEventArgs e)
@@ -209,7 +226,7 @@ namespace RoboSync
             Microsoft.Win32.OpenFolderDialog dialog = new();
             dialog.Multiselect = false;
             dialog.Title = "Select an input folder";
-            dialog.InitialDirectory = folder.Path;
+            if (Directory.Exists(folder.Path) && null != Directory.GetParent(folder.Path)) dialog.InitialDirectory = Directory.GetParent(folder.Path)?.ToString();
             bool? result = dialog.ShowDialog();
             if (result == true)
             {

@@ -97,6 +97,8 @@ namespace RoboSync
                 "We use ROBOCOPY that is a very efficient Windows file copy method\n\n" +
                 "Step 1:\nBrowse to set an Output Folder location\n" +
                 "This will usually be a folder on an attached USB drive\n" +
+                "If folder doesn't exist it will be displayed in blue, but will be created\n" +
+                "If the drive is not present (or C:) it will be displayed in red\n" +
                 "Ensure this location has sufficient space and doesn't contain other files\n" +
                 "(that could be modified or deleted)\n\n" +
                 "Step 2:\nUse the table Browse buttons to add source folders to the table\n" +
