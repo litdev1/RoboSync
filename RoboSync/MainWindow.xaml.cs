@@ -293,6 +293,12 @@ namespace RoboSync
         {
             syncViewModel.BatchCommands();
         }
+
+        private void Button_UpdatesClick(object sender, RoutedEventArgs e)
+        {
+            string url = "https://github.com/litdev1/RoboSync";
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
     }
 }
 

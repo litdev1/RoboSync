@@ -5,9 +5,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Windows;
 
 namespace RoboSync
@@ -87,6 +89,7 @@ namespace RoboSync
 
         internal void Initialise()
         {
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
             syncModel = new SyncModel();
             syncModel.PropertyChanged += ModelPropertyChanged;
             syncModel.Initialise();
@@ -221,8 +224,11 @@ namespace RoboSync
             {
                 text += "ROBOCOPY \"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + "\n";
             }
-            Clipboard.Clear();
-            Clipboard.SetText(text);
+            //Clipboard.Clear();
+            //Clipboard.SetText(text);
+            text += "pause\n";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\RoboSync.bat";
+            File.WriteAllText(path, text);
         }
 
         internal void AbortSync()

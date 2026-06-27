@@ -104,7 +104,9 @@
             <Button x:Name="AllSyncButton" Content="Sync All" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" Width="75" ToolTip="Sync all definitions"/>
             <Button x:Name="AbortSyncButton" Content="Abort Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" Width="75" ToolTip="Abort current sync copy"/>
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
-                    ToolTip="Copy sync command(s) to clipboard for use in bat file"/>
+                    ToolTip="Copy sync command(s) to 'Robosync.bat' on desktop"/>
+            <Button x:Name="UpdateButton" Content="Check for updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
+                    ToolTip="Check for updates on GitHub source page"/>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -149,7 +151,7 @@
                     <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
                     <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
-                <Label x:Name="DefinitionLabel" Margin="4" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Label x:Name="DefinitionLabel" Margin="4" Padding="12,4,12,4" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
@@ -166,7 +168,13 @@
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
                         <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
-                        <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
+                            <DataGridTextColumn.CellStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                         <DataGridTemplateColumn Header="Browse">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

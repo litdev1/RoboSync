@@ -27,6 +27,14 @@ namespace RoboSync
                 IsFastStart |= e.Args[i].ToUpper().StartsWith("/F");
                 IsMinimised |= e.Args[i].ToUpper().StartsWith("/M");
             }
+
+            //Process thisProc = Process.GetCurrentProcess();
+            //if (Process.GetProcessesByName(thisProc.ProcessName).Length > 1)
+            //{
+            //    MessageBox.Show("Application is already running");
+            //    IsFastStart = true;
+            //    Current.Shutdown();
+            //}
         }
     }
 
