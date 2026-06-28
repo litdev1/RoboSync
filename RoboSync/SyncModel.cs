@@ -11,7 +11,7 @@ using Timer = System.Timers.Timer;
 
 namespace RoboSync
 {
-    internal class SyncModel : INotifyPropertyChanged
+    public class SyncModel : INotifyPropertyChanged
     {
         private List<Tuple<string, string, string>> commands = new List<Tuple<string, string, string>>();
         private Tuple<string, string, string>? command = null;
@@ -80,14 +80,14 @@ namespace RoboSync
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        internal void Initialise()
+        public void Initialise()
         {
             Status = 0;
             Progress1 = 0;
             Progress2 = 0;
         }
 
-        internal void DoSync(List<Tuple<string, string, string>> _commands)
+        public void DoSync(List<Tuple<string, string, string>> _commands)
         {
             commands = _commands;
 
@@ -239,7 +239,7 @@ namespace RoboSync
             Status = 0;
         }
 
-        internal void AbortSync()
+        public void AbortSync()
         {
             if (null == worker) return;
             worker.CancelAsync();

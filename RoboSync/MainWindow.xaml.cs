@@ -24,13 +24,17 @@ namespace RoboSync
 
         public MainWindow()
         {
+            PreInitialise();
+            InitializeComponent();
+        }
+
+        private void PreInitialise()
+        {
             if (!App.IsFastStart)
             {
                 SplashScreen splash = new SplashScreen("RoboSync.png");
                 splash.Show(true, true);
             }
-
-            InitializeComponent();
         }
 
         private void ViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -67,12 +71,6 @@ namespace RoboSync
                         }
                         Cursor = null;
                         break;
-                    case "Progress1":
-                        Progress.Value = syncViewModel.Progress1;
-                        break;
-                    case "Progress2":
-                        Progress2.Value = syncViewModel.Progress2;
-                        break;
                     case "LogLine":
                         LogTextBox.AppendText(syncViewModel.LogLine + Environment.NewLine);
                         LogTextBox.ScrollToEnd();
@@ -80,15 +78,6 @@ namespace RoboSync
                     case "LogText":
                         LogTextBox.Text = syncViewModel.LogText;
                         LogTextBox.ScrollToEnd();
-                        break;
-                    case "ReadBytes":
-                        ReadProgressTextBox.Text = syncViewModel.ReadBytes;
-                        break;
-                    case "WriteBytes":
-                        WriteProgressTextBox.Text = syncViewModel.WriteBytes;
-                        break;
-                    case "ProgressTime":
-                        TimeProgressTextBox.Text = syncViewModel.ProgressTime;
                         break;
                 }
             });
@@ -109,6 +98,7 @@ namespace RoboSync
             DefinitionsDataGrid.ItemsSource = Definitions;
 
             syncViewModel = new SyncViewModel(Definitions);
+            DataContext = syncViewModel;
             syncViewModel.PropertyChanged += ViewModelPropertyChanged;
             syncViewModel.Initialise();
         }
@@ -151,6 +141,8 @@ namespace RoboSync
                 {
                     WindowState = WindowState.Minimized;
                 }
+
+                syncViewModel.Version = new Version(1, 0, 0, 0);
             }
             catch (Exception)
             {
@@ -171,7 +163,7 @@ namespace RoboSync
 
         private void OnOutputBrowse(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFolderDialog dialog = new();
+            OpenFolderDialog dialog = new();
             dialog.Multiselect = false;
             dialog.Title = "Select an output folder";
             if (Directory.Exists(OutputTextBox.Text)) dialog.InitialDirectory = OutputTextBox.Text;
@@ -223,7 +215,7 @@ namespace RoboSync
                 folder = new Folder{ Include = true };
             }
 
-            Microsoft.Win32.OpenFolderDialog dialog = new();
+            OpenFolderDialog dialog = new();
             dialog.Multiselect = false;
             dialog.Title = "Select an input folder";
             if (Directory.Exists(folder.Path) && null != Directory.GetParent(folder.Path)) dialog.InitialDirectory = Directory.GetParent(folder.Path)?.ToString();

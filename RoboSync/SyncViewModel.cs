@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Windows;
 
 namespace RoboSync
 {
-    internal class SyncViewModel : INotifyPropertyChanged
+    public class SyncViewModel : INotifyPropertyChanged
     {
         private SyncModel syncModel;
         private ObservableCollection<Definition> Definitions;
@@ -28,6 +19,13 @@ namespace RoboSync
             set { selectedDefinition = value; OnPropertyChanged(); }
         }
 
+        private Version _version;
+        public Version Version
+        {
+            get { return _version; }
+            set { _version = value; OnPropertyChanged(); }
+        }
+
         public int Status
         {
             get { return syncModel.Status; }
@@ -36,11 +34,13 @@ namespace RoboSync
         public int Progress1
         {
             get { return syncModel.Progress1; }
+            set { syncModel.Progress1 = value; OnPropertyChanged(); }
         }
 
         public int Progress2
         {
             get { return syncModel.Progress2; }
+            set { syncModel.Progress2 = value; OnPropertyChanged(); }
         }
 
         public string LogLine
@@ -51,16 +51,19 @@ namespace RoboSync
         public string ReadBytes
         {
             get { return syncModel.ReadBytes; }
+            set { syncModel.ReadBytes = value; OnPropertyChanged(); }
         }
 
         public string WriteBytes
         {
             get { return syncModel.WriteBytes; }
+            set { syncModel.WriteBytes = value; OnPropertyChanged(); }
         }
 
         public string ProgressTime
         {
             get { return syncModel.ProgressTime; }
+            set { syncModel.ProgressTime = value; OnPropertyChanged(); }
         }
 
         private string _logText;
@@ -87,9 +90,8 @@ namespace RoboSync
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        internal void Initialise()
+        public void Initialise()
         {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
             syncModel = new SyncModel();
             syncModel.PropertyChanged += ModelPropertyChanged;
             syncModel.Initialise();
@@ -153,7 +155,7 @@ namespace RoboSync
             SelectedDefinition = Definitions[0];
         }
 
-        internal void SaveDefinitions()
+        public void SaveDefinitions()
         {
             string definitions = "";
             foreach (Definition definition in Definitions)
@@ -175,7 +177,7 @@ namespace RoboSync
             Properties.Settings.Default.Save();
         }
 
-        internal void DoSync(bool bAll = false)
+        public void DoSync(bool bAll = false)
         {
             if (null == SelectedDefinition) return;
             GetCommands(bAll);
@@ -183,7 +185,7 @@ namespace RoboSync
             syncModel.DoSync(commands);
         }
 
-        internal void GetCommands(bool bAll = false)
+        public void GetCommands(bool bAll = false)
         {
             if (null == SelectedDefinition) return;
             string flags = ""; // "/M "
@@ -216,7 +218,7 @@ namespace RoboSync
             }
         }
 
-        internal void BatchCommands()
+        public void BatchCommands()
         {
             GetCommands(true);
             string text = "";
@@ -231,12 +233,12 @@ namespace RoboSync
             File.WriteAllText(path, text);
         }
 
-        internal void AbortSync()
+        public void AbortSync()
         {
             syncModel.AbortSync();
         }
 
-        internal void EndSync()
+        public void EndSync()
         {
             syncModel.EndSync();
         }

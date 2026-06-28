@@ -104,7 +104,7 @@
             <Button x:Name="AllSyncButton" Content="Sync All" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" Width="75" ToolTip="Sync all definitions"/>
             <Button x:Name="AbortSyncButton" Content="Abort Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" Width="75" ToolTip="Abort current sync copy"/>
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
-                    ToolTip="Copy sync command(s) to 'Robosync.bat' on desktop"/>
+                    ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop"/>
             <Button x:Name="UpdateButton" Content="Check for updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
                     ToolTip="Check for updates on GitHub source page"/>
         </StackPanel>
@@ -190,22 +190,25 @@
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
                      FontSize="11" FontFamily="Consolas"/>
             <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40" Background="White">
-                <TextBlock x:Name="ReadProgressTextBox" Text="" TextAlignment="Left" Margin="4"/>
+                <TextBlock x:Name="ReadProgressTextBox" TextAlignment="Left" Margin="4" Text="{Binding ReadBytes}"/>
             </Border>
             <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
-                <TextBlock x:Name="WriteProgressTextBox" Text="" TextAlignment="Right" Margin="4"/>
+                <TextBlock x:Name="WriteProgressTextBox" TextAlignment="Right" Margin="4" Text="{Binding WriteBytes}"/>
             </Border>
             <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
-                <TextBlock x:Name="TimeProgressTextBox" Text="" TextAlignment="Center" Margin="4"/>
+                <TextBlock x:Name="TimeProgressTextBox" TextAlignment="Center" Margin="4" Text="{Binding ProgressTime}"/>
             </Border>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#3388AA"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#3388AA"/>
+            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#3388AA" Value="{Binding Progress2}"/>
+            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#3388AA" Value="{Binding Progress1}"/>
         </Grid>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="LightBlue"/>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightBlue"/>
         <StatusBar Grid.Row="2" Background="AliceBlue">
             <StatusBarItem HorizontalAlignment="Left">
-                <TextBlock x:Name="StatusTextBlock" Text=""/>
+                <TextBlock x:Name="StatusTextBlock"/>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="VersionTextBlock" Text="{Binding Version, StringFormat='Version {0}'}"/>
             </StatusBarItem>
         </StatusBar>
     </Grid>

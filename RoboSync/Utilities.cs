@@ -83,7 +83,6 @@ namespace RoboSync
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        const int SW_HIDE = 0;
         const int NIM_ADD = 0x00000000;
         const int NIM_DELETE = 0x00000002;
         const int NIF_MESSAGE = 0x00000001;
