@@ -7,42 +7,31 @@
         mc:Ignorable="d"
         Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized" Loaded="Window_Loaded">
     <Window.Resources>
-        <!--
-        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#5588CC"/>
-        <LinearGradientBrush x:Key="GardientBrush" StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#0000AA" Offset="0"/>
-            <GradientStop Color="#8888FF" Offset="0.5"/>
-            <GradientStop Color="#0000AA" Offset="1"/>
+        <SolidColorBrush x:Key="PaleBrush" Color="AliceBlue"/>
+        <SolidColorBrush x:Key="LightBrush" Color="#AADDEE"/>
+        <LinearGradientBrush x:Key="GradientBrush" StartPoint="0.4,0" EndPoint="0.6,1">
+            <GradientStop Color="#AADDEE" Offset="0"/>
+            <GradientStop Color="#CCFFFF" Offset="0.5"/>
+            <GradientStop Color="#AADDEE" Offset="1"/>
         </LinearGradientBrush>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{StaticResource GardientBrush}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" ClipToBounds="True">
-                            <Rectangle HorizontalAlignment="Stretch"    
-                                        VerticalAlignment="Stretch"    
-                                        Fill="{TemplateBinding Background}"    
-                                        RadiusX="4" RadiusY="4"   />
-                            <DockPanel>
-                                <ContentPresenter Margin="2"    
-                                        Content="{TemplateBinding  Content}"    
-                                        TextBlock.Foreground="White" />
-                            </DockPanel>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        -->
-
+        <LinearGradientBrush x:Key="MouseOverBrush" StartPoint="0.4,0" EndPoint="0.6,1">
+            <GradientStop Color="#6688AA" Offset="0"/>
+            <GradientStop Color="#99BBDD" Offset="0.5"/>
+            <GradientStop Color="#6688AA" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="EnabledBrush" StartPoint="0.4,0" EndPoint="0.6,1">
+            <GradientStop Color="#DDDDEE" Offset="0"/>
+            <GradientStop Color="#EEEEFF" Offset="0.5"/>
+            <GradientStop Color="#DDDDEE" Offset="1"/>
+        </LinearGradientBrush>
+        
         <Style TargetType="Button">
             <Style.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="5"/>
                 </Style>
             </Style.Resources>
-            <Setter Property="Background" Value="LightBlue" />
+            <Setter Property="Background" Value="{StaticResource GradientBrush}" />
             <Setter Property="Foreground" Value="Black" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -55,11 +44,11 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value ="#3388AA" />
+                    <Setter Property="Background" Value ="{StaticResource MouseOverBrush}" />
                     <Setter Property="Foreground" Value ="White" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="false">
-                    <Setter Property="Background" Value ="LightGray" />
+                    <Setter Property="Background" Value ="{StaticResource EnabledBrush}" />
                     <Setter Property="Foreground" Value ="Black" />
                 </Trigger>
             </Style.Triggers>
@@ -93,7 +82,7 @@
             </Style.Resources>
         </Style>
     </Window.Resources>
-    <Grid Margin="0" Background="AliceBlue">
+    <Grid Margin="0" Background="{StaticResource PaleBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -144,7 +133,7 @@
                 </DataGrid>
                 <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,0"/>
             </StackPanel>
-            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="LightBlue"/>
+            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <StackPanel Grid.Column="2" >
                 <Grid Margin="4" Height="30" >
                     <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
@@ -185,25 +174,23 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
-            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="LightBlue"/>
-            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,87"
+            <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
+            <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,107"
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"
                      FontSize="11" FontFamily="Consolas"/>
-            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40" Background="White">
-                <TextBlock x:Name="ReadProgressTextBox" TextAlignment="Left" Margin="4" Text="{Binding ReadBytes}"/>
-            </Border>
-            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
-                <TextBlock x:Name="WriteProgressTextBox" TextAlignment="Right" Margin="4" Text="{Binding WriteBytes}"/>
-            </Border>
-            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="40">
-                <TextBlock x:Name="TimeProgressTextBox" TextAlignment="Center" Margin="4" Text="{Binding ProgressTime}"/>
+            <Border BorderThickness="1" CornerRadius="5" BorderBrush="Gray" Grid.Column="4" Margin="4,0,4,42" VerticalAlignment="Bottom" Height="60" Background="White">
+                <Grid>
+                    <TextBlock x:Name="ReadProgressTextBox" TextAlignment="Left" Margin="4" Text="{Binding ReadBytes}"/>
+                    <TextBlock x:Name="WriteProgressTextBox" TextAlignment="Right" Margin="4" Text="{Binding WriteBytes}"/>
+                    <TextBlock x:Name="TimeProgressTextBox" TextAlignment="Center" Margin="4" Text="{Binding ProgressTime}"/>
+                </Grid>
             </Border>
             <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#3388AA" Value="{Binding Progress2}"/>
             <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#3388AA" Value="{Binding Progress1}"/>
         </Grid>
-        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="LightBlue"/>
-        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="LightBlue"/>
-        <StatusBar Grid.Row="2" Background="AliceBlue">
+        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource LightBrush}"/>
+        <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource LightBrush}"/>
+        <StatusBar Grid.Row="2" Background="{StaticResource PaleBrush}">
             <StatusBarItem HorizontalAlignment="Left">
                 <TextBlock x:Name="StatusTextBlock"/>
             </StatusBarItem>

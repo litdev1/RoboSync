@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Timers;
-using System.Windows.Threading;
 using Timer = System.Timers.Timer;
 
 namespace RoboSync
@@ -17,9 +12,10 @@ namespace RoboSync
         private Tuple<string, string, string>? command = null;
         private BackgroundWorker? worker;
         private Process? process = null;
-        private long inSize = 0;
-        private long outSize = 0;
+        private double inSize = 0;
+        private double outSize = 0;
         private long numError = 0;
+        private string estimate = "";
 
         private int _status;
         public int Status
@@ -115,11 +111,67 @@ namespace RoboSync
             foreach (var _command in commands)
             {
                 command = _command;
-                process = new Process();
                 Progress1 = 0;
                 Progress2 = (int)(100 * (i++ / (double)commands.Count));
                 Status = 1;
                 ProgressTime = command.Item1;
+
+                //First call get number of bytes that will be copied
+                estimate = "";
+                process = new Process();
+                process.StartInfo.CreateNoWindow = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.FileName = "ROBOCOPY";
+                process.OutputDataReceived += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(e.Data))
+                    {
+                        string[] words = e.Data.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        if (words[0] == "Bytes")
+                        {
+                            inSize = 0;
+                            double.TryParse(words[4], out inSize);
+                            switch (words[5])
+                            {
+                                case "g":
+                                    estimate = "INFO : Estimated " + inSize.ToString("0.0") + " GB to be copied";
+                                    inSize *= 1024 * 1024 * 1024;
+                                    break;
+                                case "m":
+                                    estimate = "INFO : Estimated " + inSize.ToString("0.0") + " MB to be copied";
+                                    inSize *= 1024 * 1024;
+                                    break;
+                                case "k":
+                                    estimate = "INFO : Estimated " + inSize.ToString("0.0") + " kB to be copied";
+                                    inSize *= 1024;
+                                    break;
+                                default:
+                                    estimate = "INFO : Estimated " + inSize.ToString("0.0") + " B to be copied";
+                                    break;
+                            }
+                        }
+                    }
+                };
+                process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + " /L";
+                process.Start();
+                process.BeginOutputReadLine();
+                process.WaitForExit();
+
+                //Reporting timer
+                Timer timer = new Timer();
+                timer.Elapsed += new ElapsedEventHandler(DoTimer);
+                timer.Interval = 5000;
+                timer.Enabled = true;
+
+                if (worker.CancellationPending)
+                {
+                    timer.Enabled = false;
+                    return;
+                }
+
+                //Now do the copying
+                process = new Process();
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
@@ -132,51 +184,26 @@ namespace RoboSync
                         LogLine = e.Data;
                     }
                 };
-
-                inSize = Dir.GetSize(command.Item1);
-
-                Timer timer1 = new Timer();
-                timer1.Elapsed += new ElapsedEventHandler(DoTimer1);
-                timer1.Interval = 1000 * Math.Min(60, Math.Max(5, inSize / 1024.0 / 1024.0 / 1024.0));
-                timer1.Enabled = true;
-                Timer timer2 = new Timer();
-                timer2.Elapsed += new ElapsedEventHandler(DoTimer2);
-                timer2.Interval = 5000;
-                timer2.Enabled = true;
-
-                if (worker.CancellationPending)
-                {
-                    timer1.Enabled = false;
-                    timer2.Enabled = false;
-                    return;
-                }
                 process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3;
                 process.Start();
                 process.BeginOutputReadLine();
                 process.WaitForExit();
-                Progress1 = 100;
-                Progress2 = (int)(100 * (i / (double)commands.Count));
-                timer1.Enabled = false;
-                timer2.Enabled = false;
+                timer.Enabled = false;
             }
             command = null;
-            LogLine = Environment.NewLine + (worker.CancellationPending ? "Aborted" : "Completed") + " with a total of " + numError + " errors detected";
+            if (worker.CancellationPending)
+            {
+                LogLine = Environment.NewLine + "INFO : Aborted with a total of " + numError + " errors detected";
+            }
+            else
+            {
+                LogLine = Environment.NewLine + "INFO : Completed with a total of " + numError + " errors detected";
+                Progress1 = 100;
+                Progress2 = (int)(100 * (i / (double)commands.Count));
+            }
         }
 
-        private void DoTimer1(object? sender, ElapsedEventArgs e)
-        {
-            if (null == command) return;
-            if (null == worker) return;
-            if (process == null) return; // guard against null Process
-
-            outSize = Dir.GetSize(command.Item2);
-
-            // avoid divide-by-zero if inSize is 0
-            int progress = inSize == 0 ? 0 : (int)(100 * (double)outSize / (double)inSize);
-            worker.ReportProgress(progress);
-        }
-
-        private void DoTimer2(object? sender, ElapsedEventArgs e)
+        private void DoTimer(object? sender, ElapsedEventArgs e)
         {
             if (null == command) return;
             if (null == worker) return;
@@ -184,6 +211,11 @@ namespace RoboSync
 
             try
             {
+                if (estimate != "")
+                {
+                    LogLine = Environment.NewLine + estimate + Environment.NewLine;
+                    estimate = "";
+                }
                 var runTime = (DateTime.Now - process.StartTime);
                 var rates = IoSampler.SampleBytesAsync(process);
                 var readB = rates.Item1;
@@ -200,13 +232,19 @@ namespace RoboSync
                     writeB /= 1024;
                     writeUnit = " MByte/s";
                 }
-                ReadBytes = "\nRead = " + readB.ToString("0.#") + readUnit;
-                WriteBytes = "\nWrite = " + writeB.ToString("0.#") + writeUnit;
+                ReadBytes = "\nRead : " + rates.Item3.ToString("0") + " MB\n(" + readB.ToString("0.0") + readUnit + ")";
+                WriteBytes = "\nWrite : " + rates.Item4.ToString("0") + " MB\n(" +writeB.ToString("0.0") + writeUnit + ")";
                 long sec = (long)runTime.TotalSeconds;
                 long min = sec / 60;
                 long hour = min / 60;
-                ProgressTime = command.Item1 + "\n" + hour.ToString("00") + ":" + (min % 60).ToString("00") +
+                ProgressTime = command.Item1 + "\n\n" + hour.ToString("00") + ":" + (min % 60).ToString("00") +
                 ":" + (sec % 60).ToString("00") + " (H:M:S)";
+                outSize = Dir.GetSize(command.Item2);
+
+                // avoid divide-by-zero if inSize is 0
+                outSize = rates.Item4 * 1024 * 1024;
+                int progress = inSize == 0 ? 0 : (int)(100 * outSize / inSize);
+                worker.ReportProgress(progress);
             }
             catch
             {

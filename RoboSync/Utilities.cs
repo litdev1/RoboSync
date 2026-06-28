@@ -25,7 +25,7 @@ namespace RoboSync
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool GetProcessIoCounters(IntPtr hProcess, out IO_COUNTERS ioCounters);
 
-        public static Tuple<double, double> SampleBytesAsync(Process proc, int intervalMs = 1000)
+        public static Tuple<double, double, double, double> SampleBytesAsync(Process proc, int intervalMs = 1000)
         {
             if (!GetProcessIoCounters(proc.Handle, out var start))
                 throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -39,7 +39,8 @@ namespace RoboSync
             ulong writeDelta = end.WriteTransferCount - start.WriteTransferCount;
             double seconds = intervalMs / 1000.0;
 
-            return Tuple.Create(readDelta / seconds / 1024.0, writeDelta / seconds / 1024.0);
+            return Tuple.Create(readDelta / seconds / 1024.0, writeDelta / seconds / 1024.0,
+                end.ReadTransferCount / 1024.0 / 1024.0, end.WriteTransferCount / 1024.0 / 1024.0);
         }
     }
 
