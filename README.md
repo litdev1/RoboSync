@@ -4,7 +4,8 @@ Installer: https://github.com/litdev1/RoboSync/releases/download/Version1.0/Setu
 
 Installer may request .Net runtime to also be installed.
 
-<img width="2080" height="1390" alt="image" src="https://github.com/user-attachments/assets/aafda352-d4cc-4182-9ceb-5355cad85faa" />
+<img width="2080" height="1390" alt="image" src="https://github.com/user-attachments/assets/445c5711-fd07-4974-961f-598b6d3f83bf" />
+
 
 
 
