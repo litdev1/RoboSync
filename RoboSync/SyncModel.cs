@@ -275,6 +275,10 @@ namespace RoboSync
             }
             process = null;
             Status = 0;
+            if (App.IsRun)
+            {
+                //System.Windows.Application.Current.Shutdown();
+            }
         }
 
         public void AbortSync()

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -107,6 +106,8 @@ namespace RoboSync
         {
             try
             {
+                syncViewModel.Version = new Version(1, 0, 0, 0);
+
                 var module = Process.GetCurrentProcess().MainModule;
                 if (null != module)
                 {
@@ -142,7 +143,10 @@ namespace RoboSync
                     WindowState = WindowState.Minimized;
                 }
 
-                syncViewModel.Version = new Version(1, 0, 0, 0);
+                if (App.IsRun)
+                {
+                    syncViewModel.DoSync(true);
+                }
             }
             catch (Exception)
             {
@@ -151,6 +155,8 @@ namespace RoboSync
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            OutputTextBox.Focus();
+
             Properties.Settings.Default.WinState = WindowState == WindowState.Minimized ? (int)WindowState.Normal : (int)WindowState;
             Properties.Settings.Default.WinTop = Top;
             Properties.Settings.Default.WinLeft = Left;
@@ -290,6 +296,16 @@ namespace RoboSync
         {
             string url = "https://github.com/litdev1/RoboSync";
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+        }
+
+        private void SchedulesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+
+            //string createTaskCmd = "/CREATE /F /SC DAILY /TN \"Backup\\RoboSync\" /TR \"'" + Environment.ProcessPath + "' /R\" /ST 02:00";
+            //Process.Start(new ProcessStartInfo("SCHTASKS", createTaskCmd) { CreateNoWindow = true, UseShellExecute = false });
+
+            string deleteTaskCmd = "/DELETE /F /TN \"Backup\\RoboSync\"";
+            Process.Start(new ProcessStartInfo("SCHTASKS", deleteTaskCmd) { CreateNoWindow = true, UseShellExecute = false });
         }
     }
 }

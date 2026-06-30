@@ -1,12 +1,19 @@
-﻿using System.Collections.ObjectModel;
+﻿using RoboSync;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Timers;
+using System.Windows.Controls;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoboSync
 {
+    public enum Days { All, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
+
     public class SyncViewModel : INotifyPropertyChanged
     {
+      
         private SyncModel syncModel;
         private ObservableCollection<Definition> Definitions;
 
@@ -124,25 +131,34 @@ namespace RoboSync
 
             foreach (string definitionString in definitionArray)
             {
-                string[] parts = definitionString.Split('@');
-                if (parts.Length == 3)
+                string[] parts = definitionString.Split('@', StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length >= 2)
                 {
                     Definition definition = new Definition() { Label = parts[0], Output = parts[1] };
-                    string[] folderStrings = parts[2].Split(';', StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string folderString in folderStrings)
+                    if (parts.Length >= 3)
                     {
-                        string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                        if (folderParts.Length == 3)
+                        string[] folderStrings = parts[2].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                        foreach (string folderString in folderStrings)
                         {
-                            long size = 0;
-                            long.TryParse(folderParts[2], out size);
-                            definition.Folders.Add(new Folder()
+                            string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                            if (folderParts.Length == 3)
                             {
-                                Path = folderParts[0],
-                                Include = bool.Parse(folderParts[1]),
-                                Size = size
-                            });
+                                long size = 0;
+                                long.TryParse(folderParts[2], out size);
+                                definition.Folders.Add(new Folder()
+                                {
+                                    Path = folderParts[0],
+                                    Include = bool.Parse(folderParts[1]),
+                                    Size = size
+                                });
+                            }
                         }
+                    }
+                    if (parts.Length >= 6)
+                    {
+                        definition.Schedule = bool.Parse(parts[3]);
+                        definition.Day = (Days)Enum.Parse(typeof(Days), parts[4]);
+                        definition.Time = TimeOnly.Parse(parts[5]);
                     }
                     Definitions.Add(definition);
                 }
@@ -171,6 +187,10 @@ namespace RoboSync
                 {
                     definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size.ToString() + ";";
                 }
+                definitions += "@";
+                definitions += definition.Schedule + "@";
+                definitions += definition.Day + "@";
+                definitions += definition.Time + "@";
                 definitions += "#";
             }
             Properties.Settings.Default.Definitions = definitions;
@@ -263,12 +283,18 @@ namespace RoboSync
         public ObservableCollection<Folder> Folders { get; set; }
         public string Label { get; set; }
         public string Output { get; set; }
+        public bool Schedule { get; set; }
+        public TimeOnly Time { get; set; }
+        public Days Day { get; set; }
 
-        public Definition()
+    public Definition()
         {
             Folders = new ObservableCollection<Folder>();
             Label = string.Empty;
             Output = string.Empty;
+            Schedule = false;
+            Time = new TimeOnly(2, 0);
+            Day = Days.All;
         }
     }
 }

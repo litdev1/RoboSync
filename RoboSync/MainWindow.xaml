@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:RoboSync" d:DataContext="{d:DesignInstance Type=local:SyncViewModel}"
         mc:Ignorable="d"
         Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized" Loaded="Window_Loaded">
@@ -24,7 +25,7 @@
             <GradientStop Color="#EEEEFF" Offset="0.5"/>
             <GradientStop Color="#DDDDEE" Offset="1"/>
         </LinearGradientBrush>
-        
+
         <Style TargetType="Button">
             <Style.Resources>
                 <Style TargetType="Border">
@@ -81,6 +82,11 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <ObjectDataProvider x:Key="dayEnum" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type Type="local:Days"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid Margin="0" Background="{StaticResource PaleBrush}">
         <Grid.RowDefinitions>
@@ -131,7 +137,7 @@
                         <DataGridTextColumn Header="Definitions" Binding="{Binding Label}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,0"/>
+                <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,10"/>
             </StackPanel>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <StackPanel Grid.Column="2" >
@@ -141,7 +147,8 @@
                     <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
                 <Label x:Name="DefinitionLabel" Margin="4" Padding="12,4,12,4" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <DataGrid x:Name="FoldersDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
+                <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
+                    Margin="4">
                     <DataGrid.Resources>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
                         <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
@@ -173,6 +180,15 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+                <Label Margin="4" Padding="12,4,12,4" Content="Schedule" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Grid>
+                    <CheckBox Content="Schedule Sync" Margin="4,6,0,2" HorizontalAlignment="Left" IsChecked="{Binding SelectedDefinition.Schedule}"/>
+                    <Label Content="Day(s)" Margin="104,0,0,0" HorizontalAlignment="Left"/>
+                    <ComboBox Margin="152,4,0,4" Width="100" SelectedItem="{Binding SelectedDefinition.Day, Mode=TwoWay}" HorizontalAlignment="Left"
+                              ItemsSource="{Binding Source={StaticResource dayEnum}}"/>
+                    <Label Content="Time" Margin="257,0,0,0" HorizontalAlignment="Left" RenderTransformOrigin="-0.41,0.546"/>
+                    <TextBox Margin="298,4,0,4" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left"/>
+                </Grid>
             </StackPanel>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,107"

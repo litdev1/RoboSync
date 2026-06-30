@@ -17,6 +17,7 @@ namespace RoboSync
         public static bool IsSysTray = false;
         public static bool IsFastStart = false;
         public static bool IsMinimised = false;
+        public static bool IsRun = false;
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
@@ -26,6 +27,7 @@ namespace RoboSync
                 IsSysTray |= e.Args[i].ToUpper().StartsWith("/T");
                 IsFastStart |= e.Args[i].ToUpper().StartsWith("/F");
                 IsMinimised |= e.Args[i].ToUpper().StartsWith("/M");
+                IsRun |= e.Args[i].ToUpper().StartsWith("/R");
             }
 
             //Process thisProc = Process.GetCurrentProcess();
