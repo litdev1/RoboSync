@@ -1,15 +1,17 @@
 ﻿using RoboSync;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows.Controls;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoboSync
 {
-    public enum Days { All, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
+    public enum Days { All, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
     public class SyncViewModel : INotifyPropertyChanged
     {
@@ -18,6 +20,7 @@ namespace RoboSync
         private ObservableCollection<Definition> Definitions;
 
         private List<Tuple<string, string, string>> commands = new List<Tuple<string, string, string>>();
+        private string flags = "/MIR /J /XJ /MT:" + Environment.ProcessorCount + " /R:0 /W:0 /NDL /NFL /NS /NC /NP"; // "/M "
 
         private Definition? selectedDefinition;
         public Definition? SelectedDefinition
@@ -208,8 +211,6 @@ namespace RoboSync
         public void GetCommands(bool bAll = false)
         {
             if (null == SelectedDefinition) return;
-            string flags = ""; // "/M "
-            flags += "/MIR /J /XJ /MT:" + Environment.ProcessorCount + " /R:0 /W:0 /NDL /NFL /NS /NC /NP";
             commands.Clear();
             if (bAll)
             {
@@ -251,6 +252,99 @@ namespace RoboSync
             text += "pause\n";
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\RoboSync.bat";
             File.WriteAllText(path, text);
+        }
+
+        public void UpdateSchedule()
+        {
+            //Delete all RoboSync tasks first
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "SchTasks",
+                    Arguments = "/Query /FO List",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
+            while (!process.StandardOutput.EndOfStream)
+            {
+                string? line = process.StandardOutput.ReadLine();
+                if (null != line && line.Contains("\\RoboSync\\"))
+                {
+                    var task = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Last();
+                    var process1 = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "SchTasks",
+                            Arguments = "/Delete /TN \"" + task + "\" /F",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+                    process1.Start();
+                    process1.WaitForExit();
+                }
+            }
+
+            //Create the bat file and set the task
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\RoboSync\\";
+            foreach (var definition in Definitions)
+            {
+                if (definition.Schedule)
+                {
+                    Regex regex = new Regex("[^a-zA-Z0-9 -]");
+                    string label = regex.Replace(definition.Label, "");
+                    string time = definition.Time.ToString("HH:mm");
+                    string schedule = "";
+                    switch (definition.Day)
+                    {
+                        case Days.All:
+                            schedule = "DAILY";
+                            break;
+                        case Days.Sunday:
+                            schedule = "WEEKLY /D SUN";
+                            break;
+                        case Days.Monday:
+                            schedule = "WEEKLY /D MON";
+                            break;
+                        case Days.Tuesday:
+                            schedule = "WEEKLY /D TUE";
+                            break;
+                        case Days.Wednesday:
+                            schedule = "WEEKLY /D WED";
+                            break;
+                        case Days.Thursday:
+                            schedule = "WEEKLY /D THU";
+                            break;
+                        case Days.Friday:
+                            schedule = "WEEKLY /D FRI";
+                            break;
+                        case Days.Saturday:
+                            schedule = "WEEKLY /D SAT";
+                            break;
+                    }
+
+                    string text = "";
+                    foreach (var folder in definition.Folders)
+                    {
+                        var output = definition.Output + folder.Path.Split(':').Last();
+                        if (folder.Include)
+                        {
+                            text += "ROBOCOPY \"" + folder.Path + "\" \"" + output + "\" " + "*.* " + flags + "\n";
+                        }
+                    }
+                    text += "Pause" + "\n";
+                    File.WriteAllText(appData + label + ".bat", text);
+
+                    string createTaskCmd = "/CREATE /F /SC " + schedule + " /TN \"RoboSync\\" + label + "\" /TR \"" + appData + label + ".bat\" /ST " + time;
+                    Process.Start(new ProcessStartInfo("SCHTASKS", createTaskCmd) { CreateNoWindow = true, UseShellExecute = false });
+                }
+            }
         }
 
         public void AbortSync()

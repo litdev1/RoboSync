@@ -1,13 +1,19 @@
 ﻿using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RoboSync
 {
@@ -218,7 +224,7 @@ namespace RoboSync
             }
             else
             {
-                folder = new Folder{ Include = true };
+                folder = new Folder { Include = true };
             }
 
             OpenFolderDialog dialog = new();
@@ -298,14 +304,27 @@ namespace RoboSync
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
         }
 
-        private void SchedulesDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            if (null == syncViewModel.SelectedDefinition) return;
+            syncViewModel.SelectedDefinition.Schedule = (bool)((CheckBox)sender).IsChecked;
+            syncViewModel.UpdateSchedule();
+        }
 
-            //string createTaskCmd = "/CREATE /F /SC DAILY /TN \"Backup\\RoboSync\" /TR \"'" + Environment.ProcessPath + "' /R\" /ST 02:00";
-            //Process.Start(new ProcessStartInfo("SCHTASKS", createTaskCmd) { CreateNoWindow = true, UseShellExecute = false });
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (null == syncViewModel.SelectedDefinition) return;
+            syncViewModel.SelectedDefinition.Day = (Days)((ComboBox)sender).SelectedValue;
+            syncViewModel.UpdateSchedule();
+        }
 
-            string deleteTaskCmd = "/DELETE /F /TN \"Backup\\RoboSync\"";
-            Process.Start(new ProcessStartInfo("SCHTASKS", deleteTaskCmd) { CreateNoWindow = true, UseShellExecute = false });
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (null == syncViewModel.SelectedDefinition) return;
+            TimeOnly time = syncViewModel.SelectedDefinition.Time;
+            TimeOnly.TryParse(((TextBox)sender).Text, out time);
+            syncViewModel.SelectedDefinition.Time = time;
+            syncViewModel.UpdateSchedule();
         }
     }
 }
