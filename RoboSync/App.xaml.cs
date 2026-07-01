@@ -14,6 +14,8 @@ namespace RoboSync
         public static bool IsMinimised = false;
         public static bool IsRun = false;
 
+        public static bool CanClose = false;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             ProjectSettings.Default.Reload();

@@ -160,6 +160,7 @@ namespace RoboSync
                             Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
                             if (MessageBox.Show(window, "Exit application", "RoboSync", MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.Yes)
                             {
+                                App.CanClose = true;
                                 window.Close();
                             }
                             break;

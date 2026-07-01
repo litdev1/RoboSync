@@ -54,7 +54,7 @@ namespace RoboSync
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
                         SelectedDefinition = syncViewModel.SelectedDefinition;
                         DefinitionsDataGrid.SelectedItem = SelectedDefinition;
-                        DefinitionLabel.Content = SelectedDefinition?.Label;
+                        DefinitionLabel.Text = SelectedDefinition?.Label;
                         OutputTextBox.Text = SelectedDefinition?.Output;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
@@ -137,6 +137,14 @@ namespace RoboSync
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            if (App.IsStartup && !App.CanClose)
+            {
+                e.Cancel = true;
+                App.CanClose = false;
+                WindowState = WindowState.Minimized;
+                return;
+            }
+
             OutputTextBox.Focus();
 
             Properties.Settings.Default.WinState = WindowState == WindowState.Minimized ? (int)WindowState.Normal : (int)WindowState;
@@ -232,12 +240,28 @@ namespace RoboSync
         private void DefinitionsDataGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = (DataGrid)sender;
-            DefinitionLabel.Content = ((Definition)dataGrid.SelectedItem).Label;
+            DefinitionLabel.Text = ((Definition)dataGrid.SelectedItem).Label;
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)
         {
-            Definitions.Add(new Definition() { Label = "Definition " + (Definitions.Count + 1) });
+            Definitions.Add(new Definition() { Label = "Definition" + (Definitions.Count + 1) });
+            syncViewModel.SelectedDefinition = Definitions.Last();
+        }
+
+        private void Button_CopyClick(object sender, RoutedEventArgs e)
+        {
+            if (null == SelectedDefinition) return;
+            Definition copy = new Definition() { Label = SelectedDefinition.Label + "_Copy" };
+            copy.Output = SelectedDefinition.Output;
+            //copy.Schedule = SelectedDefinition.Schedule;
+            copy.Day = SelectedDefinition.Day;
+            copy.Time = SelectedDefinition.Time;
+            foreach (var folder in SelectedDefinition.Folders)
+            {
+                copy.Folders.Add(new Folder() { Include = folder.Include, Path = folder.Path, Size = folder.Size});
+            }
+            Definitions.Add(copy);
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 

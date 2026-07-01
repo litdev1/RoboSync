@@ -42,6 +42,7 @@
             <StackPanel Grid.Column="0">
                 <Grid Margin="4" Height="30" >
                     <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
+                    <Button Content="Copy" Width="50" HorizontalAlignment="Center" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_CopyClick" ToolTip="Copy current to a new definition set"/>
                     <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
                 </Grid>
 
@@ -74,7 +75,9 @@
                     <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
                     <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
                 </Grid>
-                <Label x:Name="DefinitionLabel" Margin="4" Padding="12,4,12,4" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Border CornerRadius="5" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2">
+                    <TextBlock x:Name="DefinitionLabel"/>
+                </Border>
                 <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                     Margin="4">
                     <DataGrid.Resources>
