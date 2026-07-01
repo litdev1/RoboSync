@@ -11,7 +11,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoboSync
 {
-    public enum Days { All, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
+    public enum Days { Daily, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
     public class SyncViewModel : INotifyPropertyChanged
     {
@@ -127,7 +127,8 @@ namespace RoboSync
                 "Multiple definitions may be used to sync different sets of folders\n" +
                 "Progress calculations are approximate to keep performance optimal\n" +
                 "The ROBOCOPY commands may be exported to clipboard for use directly\n" +
-                "Recommend closing other applications first - locked files are not copied";
+                "Recommend closing other applications first - locked files are not copied\n" +
+                "Definitions may be scheduled (Tack Scheduler) to be synced daily or weekly\n";
 
             string definitions = Properties.Settings.Default.Definitions;
             string[] definitionArray = definitions.Split('#', StringSplitOptions.RemoveEmptyEntries);
@@ -148,10 +149,12 @@ namespace RoboSync
                             {
                                 long size = 0;
                                 long.TryParse(folderParts[2], out size);
+                                bool include = true;
+                                bool.TryParse(folderParts[1], out include);
                                 definition.Folders.Add(new Folder()
                                 {
                                     Path = folderParts[0],
-                                    Include = bool.Parse(folderParts[1]),
+                                    Include = include,
                                     Size = size
                                 });
                             }
@@ -160,8 +163,12 @@ namespace RoboSync
                     if (parts.Length >= 6)
                     {
                         definition.Schedule = bool.Parse(parts[3]);
-                        definition.Day = (Days)Enum.Parse(typeof(Days), parts[4]);
-                        definition.Time = TimeOnly.Parse(parts[5]);
+                        Days day = Days.Daily;
+                        Enum.TryParse(parts[4], out day);
+                        definition.Day = day;
+                        TimeOnly time = new TimeOnly(2, 0);
+                        TimeOnly.TryParse(parts[5], out time);
+                        definition.Time = time;
                     }
                     Definitions.Add(definition);
                 }
@@ -303,7 +310,7 @@ namespace RoboSync
                     string schedule = "";
                     switch (definition.Day)
                     {
-                        case Days.All:
+                        case Days.Daily:
                             schedule = "DAILY";
                             break;
                         case Days.Sunday:
@@ -381,14 +388,14 @@ namespace RoboSync
         public TimeOnly Time { get; set; }
         public Days Day { get; set; }
 
-    public Definition()
+        public Definition()
         {
             Folders = new ObservableCollection<Folder>();
             Label = string.Empty;
             Output = string.Empty;
             Schedule = false;
             Time = new TimeOnly(2, 0);
-            Day = Days.All;
+            Day = Days.Daily;
         }
     }
 }

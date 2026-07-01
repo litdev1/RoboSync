@@ -106,14 +106,13 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Label Margin="4" Padding="12,4,12,4" Content="Schedule" HorizontalContentAlignment="Center" BorderThickness="2" BorderBrush="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <Grid HorizontalAlignment="Center">
+                <Grid HorizontalAlignment="Center" Margin="10">
                     <CheckBox Content="Schedule Sync" Margin="4,6,0,2" HorizontalAlignment="Left" IsChecked="{Binding SelectedDefinition.Schedule}" Click="CheckBox_Click"/>
                     <Label Content="Day(s)" Margin="104,0,0,0" HorizontalAlignment="Left"/>
-                    <ComboBox Style="{DynamicResource ComboBoxStyle1}" Margin="152,4,0,4" Width="100" SelectedItem="{Binding SelectedDefinition.Day, Mode=TwoWay}" HorizontalAlignment="Left"
+                    <ComboBox Style="{DynamicResource ComboBoxStyle1}" Margin="152,3,146,5" SelectedItem="{Binding SelectedDefinition.Day, Mode=TwoWay}"
                               ItemsSource="{Binding Source={StaticResource dayEnum}}" SelectionChanged="ComboBox_SelectionChanged"/>
                     <Label Content="Time" Margin="257,0,0,0" HorizontalAlignment="Left" RenderTransformOrigin="-0.41,0.546"/>
-                    <TextBox Margin="298,4,0,4" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
+                    <TextBox Margin="298,3,0,5" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
                 </Grid>
             </StackPanel>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
