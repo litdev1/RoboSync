@@ -94,5 +94,65 @@ namespace RoboSync.Properties {
                 this["WinHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsStartup {
+            get {
+                return ((bool)(this["IsStartup"]));
+            }
+            set {
+                this["IsStartup"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsSysTray {
+            get {
+                return ((bool)(this["IsSysTray"]));
+            }
+            set {
+                this["IsSysTray"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsFastStart {
+            get {
+                return ((bool)(this["IsFastStart"]));
+            }
+            set {
+                this["IsFastStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsMinimised {
+            get {
+                return ((bool)(this["IsMinimised"]));
+            }
+            set {
+                this["IsMinimised"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsRun {
+            get {
+                return ((bool)(this["IsRun"]));
+            }
+            set {
+                this["IsRun"] = value;
+            }
+        }
     }
 }

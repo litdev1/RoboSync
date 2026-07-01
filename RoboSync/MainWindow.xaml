@@ -6,7 +6,7 @@
         xmlns:core="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:RoboSync" d:DataContext="{d:DesignInstance Type=local:SyncViewModel}"
         mc:Ignorable="d"
-        Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized" Loaded="Window_Loaded">
+        Title="RoboSync" Height="800" Width="1200" Closing="Window_Closing" Initialized="Window_Initialized" Loaded="Window_Loaded" StateChanged="Window_StateChanged">
     <Window.Resources>
         <ObjectDataProvider x:Key="dayEnum" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -26,6 +26,8 @@
             <Button x:Name="AbortSyncButton" Content="Abort Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" Width="75" ToolTip="Abort current sync copy"/>
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
                     ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop"/>
+            <Button x:Name="SettingsButton" Content="Settings" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_SettingsClick"
+                    ToolTip="Check for updates on GitHub source page"/>
             <Button x:Name="UpdateButton" Content="Check for updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
                     ToolTip="Check for updates on GitHub source page"/>
         </StackPanel>

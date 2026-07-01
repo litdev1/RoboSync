@@ -1,10 +1,5 @@
-﻿using Microsoft.Win32;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Windows;
+﻿using System.Windows;
+using ProjectSettings = global::RoboSync.Properties.Settings;
 
 namespace RoboSync
 {
@@ -21,14 +16,28 @@ namespace RoboSync
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            ProjectSettings.Default.Reload();
+            IsStartup = ProjectSettings.Default.IsStartup;
+            IsSysTray = ProjectSettings.Default.IsSysTray;
+            IsFastStart = ProjectSettings.Default.IsFastStart;
+            IsMinimised = ProjectSettings.Default.IsMinimised;
+            IsRun = ProjectSettings.Default.IsRun;
+
             for (int i = 0; i != e.Args.Length; ++i)
             {
-                IsStartup |= e.Args[i].ToUpper().StartsWith("/S");
-                IsSysTray |= e.Args[i].ToUpper().StartsWith("/T");
-                IsFastStart |= e.Args[i].ToUpper().StartsWith("/F");
-                IsMinimised |= e.Args[i].ToUpper().StartsWith("/M");
-                IsRun |= e.Args[i].ToUpper().StartsWith("/R");
+                IsStartup = ArgCheck(e.Args[i], "S");
+                IsSysTray = ArgCheck(e.Args[i], "T");
+                IsFastStart = ArgCheck(e.Args[i], "F");
+                IsMinimised = ArgCheck(e.Args[i], "M");
+                IsRun = ArgCheck(e.Args[i], "R");
             }
+
+            ProjectSettings.Default.IsStartup = IsStartup;
+            ProjectSettings.Default.IsSysTray = IsSysTray;
+            ProjectSettings.Default.IsFastStart = IsFastStart;
+            ProjectSettings.Default.IsMinimised = IsMinimised;
+            ProjectSettings.Default.IsRun = IsRun;
+            ProjectSettings.Default.Save();
 
             //Process thisProc = Process.GetCurrentProcess();
             //if (Process.GetProcessesByName(thisProc.ProcessName).Length > 1)
@@ -37,6 +46,14 @@ namespace RoboSync
             //    IsFastStart = true;
             //    Current.Shutdown();
             //}
+        }
+
+        private bool ArgCheck(string arg, string s)
+        {
+            bool ret = false;
+            ret |= arg.ToUpper().StartsWith("/" + s);
+            ret &= !(arg.ToUpper().StartsWith("/" + s) && arg.ToUpper().EndsWith("-"));
+            return ret;
         }
     }
 

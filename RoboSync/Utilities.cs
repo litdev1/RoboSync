@@ -6,6 +6,8 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace RoboSync
 {
@@ -75,20 +77,26 @@ namespace RoboSync
         }
     }
 
-    public static class NotifyIcon
+    public class NotifyIcon
     {
+        private Window window;
+
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern bool Shell_NotifyIcon(int dwMessage, NOTIFYICONDATA lpData);
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GetConsoleWindow();
-        [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern uint RegisterWindowMessage(string lpString);
 
         const int NIM_ADD = 0x00000000;
         const int NIM_DELETE = 0x00000002;
         const int NIF_MESSAGE = 0x00000001;
         const int NIF_ICON = 0x00000002;
         const int NIF_TIP = 0x00000004;
+
+        const int WM_USER = 0x0400;
+        const int WM_LBUTTONUP = 0x0202;
+        const int WM_RBUTTONUP = 0x0205;
+
+        const int uCallbackMessage = WM_USER + 1;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct NOTIFYICONDATA
@@ -103,7 +111,12 @@ namespace RoboSync
             public string szTip;
         }
 
-        public static void Create(IntPtr hWnd)
+        public NotifyIcon(Window _window)
+        {
+            window = _window;
+        }
+
+        public void Create(IntPtr hWnd)
         {
             Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
 
@@ -112,27 +125,33 @@ namespace RoboSync
             nid.hWnd = hWnd;
             nid.uID = 1;
             nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-            nid.uCallbackMessage = 0x8000;
+            nid.uCallbackMessage = uCallbackMessage;
             nid.hIcon = icon.Handle;
-            nid.szTip = "";
+            nid.szTip = "RoboSync backup tool";
 
             Shell_NotifyIcon(NIM_ADD, nid);
+
+            HwndSource source = HwndSource.FromHwnd(hWnd);
+            source.AddHook(HwndHook);
         }
 
-        public static void Delete()
+        private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
-
-            NOTIFYICONDATA nid = new NOTIFYICONDATA();
-            nid.cbSize = Marshal.SizeOf(nid);
-            nid.hWnd = GetConsoleWindow();
-            nid.uID = 1;
-            nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-            nid.uCallbackMessage = 0x8000;
-            nid.hIcon = icon.Handle;
-            nid.szTip = "";
-
-            Shell_NotifyIcon(NIM_DELETE, nid);
+            switch (msg)
+            {
+                case uCallbackMessage:
+                    switch (lParam.ToInt32())
+                    {
+                        case WM_LBUTTONUP:
+                        case WM_RBUTTONUP:
+                            window.Show();
+                            window.WindowState = WindowState.Normal;
+                            break;
+                    }
+                    handled = true;
+                    break;
+            }
+            return IntPtr.Zero;
         }
     }
 }

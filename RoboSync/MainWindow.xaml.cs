@@ -1,19 +1,13 @@
 ﻿using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Security.Policy;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace RoboSync
 {
@@ -120,7 +114,7 @@ namespace RoboSync
                     string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
                     RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(key, true);
                     string? assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-                    string? executableName = "\"" + module.FileName + "\" /Background";
+                    string? executableName = "\"" + module.FileName + "\"";
                     //var keyValue = registryKey.GetValue(assemblyName);
                     if (null != assemblyName)
                     {
@@ -139,7 +133,8 @@ namespace RoboSync
                 {
                     var wih = new System.Windows.Interop.WindowInteropHelper(this);
                     var hWnd = wih.Handle;
-                    NotifyIcon.Create(wih.Handle);
+                    NotifyIcon notifyIcon = new NotifyIcon(this);
+                    notifyIcon.Create(wih.Handle);
                     //ShowInTaskbar = false;
                     //WindowState = WindowState.Minimized;
                 }
@@ -325,6 +320,20 @@ namespace RoboSync
             TimeOnly.TryParse(((TextBox)sender).Text, out time);
             syncViewModel.SelectedDefinition.Time = time;
             syncViewModel.UpdateSchedule();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (App.IsSysTray && WindowState == WindowState.Minimized)
+            {
+                Hide();
+            }
+        }
+
+        private void Button_SettingsClick(object sender, RoutedEventArgs e)
+        {
+            Settings settings = new Settings();
+            settings.ShowDialog();
         }
     }
 }
