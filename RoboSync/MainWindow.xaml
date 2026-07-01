@@ -39,87 +39,91 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <Grid Margin="4" Height="30" >
-                    <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
-                    <Button Content="Copy" Width="50" HorizontalAlignment="Center" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_CopyClick" ToolTip="Copy current to a new definition set"/>
-                    <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
-                </Grid>
+            <ScrollViewer  Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Grid Margin="4" Height="30" >
+                        <Button Content="Add" Width="50" HorizontalAlignment="Left" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_AddClick" ToolTip="Add a new definition set"/>
+                        <Button Content="Copy" Width="50" HorizontalAlignment="Center" Margin="10,3,0,0" VerticalAlignment="Top" Click="Button_CopyClick" ToolTip="Copy current to a new definition set"/>
+                        <Button Content="Delete" Width="50" HorizontalAlignment="Right" Margin="0,3,10,0" VerticalAlignment="Top" Click="Button_DeleteClick" ToolTip="Delete current definition set"/>
+                    </Grid>
 
-                <DataGrid x:Name="DefinitionsDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
+                    <DataGrid x:Name="DefinitionsDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                           SelectionChanged="DefinitionsDataGrid_SelectionChanged" LostFocus="DefinitionsDataGrid_LostFocus">
-                    <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#3388AA"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
-                    </DataGrid.Resources>
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="{x:Type DataGridColumnHeader}">
-                            <Setter Property="Margin" Value="2"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Definitions" Binding="{Binding Label}" Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,10"/>
-            </StackPanel>
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="Margin" Value="2"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Definitions" Binding="{Binding Label}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Image Height="100" Width="100" Source="/RoboSync.png" Margin="0,10,0,10"/>
+                </StackPanel>
+            </ScrollViewer>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
-            <StackPanel Grid.Column="2" >
-                <Grid Margin="4" Height="30" >
-                    <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
-                    <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
-                    <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
-                </Grid>
-                <Border CornerRadius="5" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2">
-                    <TextBlock x:Name="DefinitionLabel"/>
-                </Border>
-                <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
+            <ScrollViewer  Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel >
+                    <Grid Margin="4" Height="30" >
+                        <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
+                        <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
+                        <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
+                    </Grid>
+                    <Border CornerRadius="5" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2">
+                        <TextBlock x:Name="DefinitionLabel"/>
+                    </Border>
+                    <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                     Margin="4">
-                    <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
-                    </DataGrid.Resources>
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="{x:Type DataGridColumnHeader}">
-                            <Setter Property="Margin" Value="2"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
-                        <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
-                        <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
-                            <DataGridTextColumn.CellStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right"/>
-                                </Style>
-                            </DataGridTextColumn.CellStyle>
-                        </DataGridTextColumn>
-                        <DataGridTemplateColumn Header="Browse">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Click="OnFolderBrowse" Content="Browse" Width="50" ToolTip="Browse to folder to sync"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid HorizontalAlignment="Center" Margin="10">
-                    <CheckBox Content="Schedule Sync" Margin="4,6,0,2" HorizontalAlignment="Left" IsChecked="{Binding SelectedDefinition.Schedule}" Click="CheckBox_Click"/>
-                    <Label Content="Day(s)" Margin="104,0,0,0" HorizontalAlignment="Left"/>
-                    <ComboBox Style="{DynamicResource ComboBoxStyle1}" Margin="152,3,146,5" SelectedItem="{Binding SelectedDefinition.Day, Mode=TwoWay}"
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                        </DataGrid.Resources>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="{x:Type DataGridColumnHeader}">
+                                <Setter Property="Margin" Value="2"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
+                            <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Browse">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="OnFolderBrowse" Content="Browse" Width="50" ToolTip="Browse to folder to sync"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid HorizontalAlignment="Center" Margin="10">
+                        <CheckBox Content="Schedule Sync" Margin="4,6,0,2" HorizontalAlignment="Left" IsChecked="{Binding SelectedDefinition.Schedule}" Click="CheckBox_Click"/>
+                        <Label Content="Day(s)" Margin="104,0,0,0" HorizontalAlignment="Left"/>
+                        <ComboBox Style="{DynamicResource ComboBoxStyle1}" Margin="152,3,146,5" SelectedItem="{Binding SelectedDefinition.Day, Mode=TwoWay}"
                               ItemsSource="{Binding Source={StaticResource dayEnum}}" SelectionChanged="ComboBox_SelectionChanged"/>
-                    <Label Content="Time" Margin="257,0,0,0" HorizontalAlignment="Left" RenderTransformOrigin="-0.41,0.546"/>
-                    <TextBox Margin="298,3,0,5" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
-                </Grid>
-            </StackPanel>
+                        <Label Content="Time" Margin="257,0,0,0" HorizontalAlignment="Left" RenderTransformOrigin="-0.41,0.546"/>
+                        <TextBox Margin="298,3,0,5" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <TextBox x:Name="LogTextBox" Grid.Column="4" Margin="4,4,4,107"
                        HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" IsReadOnly="True"

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using ProjectSettings = global::RoboSync.Properties.Settings;
 
 namespace RoboSync
@@ -41,13 +42,13 @@ namespace RoboSync
             ProjectSettings.Default.IsRun = IsRun;
             ProjectSettings.Default.Save();
 
-            //Process thisProc = Process.GetCurrentProcess();
-            //if (Process.GetProcessesByName(thisProc.ProcessName).Length > 1)
-            //{
-            //    MessageBox.Show("Application is already running");
-            //    IsFastStart = true;
-            //    Current.Shutdown();
-            //}
+            var thisProc = Process.GetCurrentProcess();
+            var otherProc = Process.GetProcessesByName(thisProc.ProcessName);
+            if (otherProc.Length > 1)
+            {
+                MessageBox.Show("RoboSync is already running", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Current.Shutdown();
+            }
         }
 
         private bool ArgCheck(string arg, string s)
