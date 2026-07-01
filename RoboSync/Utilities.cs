@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 
 namespace RoboSync
@@ -143,15 +146,55 @@ namespace RoboSync
                     switch (lParam.ToInt32())
                     {
                         case WM_LBUTTONUP:
+                            if (window.Visibility == Visibility.Hidden)
+                            {
+                                window.Show();
+                                window.WindowState = WindowState.Normal;
+                            }
+                            else
+                            {
+                                window.WindowState = WindowState.Minimized;
+                            }
+                            break;
                         case WM_RBUTTONUP:
-                            window.Show();
-                            window.WindowState = WindowState.Normal;
+                            Icon icon = new Icon(new MemoryStream(Properties.Resources.RoboSync));
+                            if (MessageBox.Show(window, "Exit application", "RoboSync", MessageBoxButton.YesNo, MessageBoxImage.Stop) == MessageBoxResult.Yes)
+                            {
+                                window.Close();
+                            }
                             break;
                     }
                     handled = true;
                     break;
             }
             return IntPtr.Zero;
+        }
+    }
+
+    public static class Utilities
+    {
+        public static void AppSettings()
+        {
+            var module = Process.GetCurrentProcess().MainModule;
+            if (null != module)
+            {
+                string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+                RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(key, true);
+                string? assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+                string? executableName = "\"" + module.FileName + "\"";
+                //var keyValue = registryKey.GetValue(assemblyName);
+                if (null != assemblyName)
+                {
+                    if (App.IsStartup)
+                    {
+                        registryKey?.SetValue(assemblyName, executableName);
+                    }
+                    else
+                    {
+                        registryKey?.DeleteValue(assemblyName, false);
+                    }
+                }
+            }
         }
     }
 }

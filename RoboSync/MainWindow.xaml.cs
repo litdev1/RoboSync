@@ -108,26 +108,7 @@ namespace RoboSync
             {
                 syncViewModel.Version = new Version(1, 0, 0, 0);
 
-                var module = Process.GetCurrentProcess().MainModule;
-                if (null != module)
-                {
-                    string key = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-                    RegistryKey? registryKey = Registry.CurrentUser.OpenSubKey(key, true);
-                    string? assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-                    string? executableName = "\"" + module.FileName + "\"";
-                    //var keyValue = registryKey.GetValue(assemblyName);
-                    if (null != assemblyName)
-                    {
-                        if (App.IsStartup)
-                        {
-                            registryKey?.SetValue(assemblyName, executableName);
-                        }
-                        else
-                        {
-                            registryKey?.DeleteValue(assemblyName, false);
-                        }
-                    }
-                }
+                Utilities.AppSettings();
 
                 if (App.IsSysTray)
                 {
@@ -135,7 +116,7 @@ namespace RoboSync
                     var hWnd = wih.Handle;
                     NotifyIcon notifyIcon = new NotifyIcon(this);
                     notifyIcon.Create(wih.Handle);
-                    //ShowInTaskbar = false;
+                    ShowInTaskbar = false;
                     //WindowState = WindowState.Minimized;
                 }
 

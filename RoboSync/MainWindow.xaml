@@ -27,7 +27,7 @@
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
                     ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop"/>
             <Button x:Name="SettingsButton" Content="Settings" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_SettingsClick"
-                    ToolTip="Check for updates on GitHub source page"/>
+                    ToolTip="Program startup options"/>
             <Button x:Name="UpdateButton" Content="Check for updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
                     ToolTip="Check for updates on GitHub source page"/>
         </StackPanel>

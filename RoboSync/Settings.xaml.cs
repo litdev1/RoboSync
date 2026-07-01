@@ -52,6 +52,8 @@ namespace RoboSync
             App.IsMinimised = SettingsData[3].Value;
             App.IsSysTray = SettingsData[4].Value;
 
+            Utilities.AppSettings();
+
             Properties.Settings.Default.IsStartup = App.IsStartup;
             Properties.Settings.Default.IsSysTray = App.IsSysTray;
             Properties.Settings.Default.IsFastStart = App.IsFastStart;
