@@ -47,8 +47,9 @@ namespace RoboSync
                         StatusTextBlock.Text = bReady ? "Ready" : "Sync in progress";
                         FullSyncButton.IsEnabled = bReady;
                         AllSyncButton.IsEnabled = bReady;
-                        ClipboardButton.IsEnabled = bReady;
+                        //ClipboardButton.IsEnabled = bReady;
                         AbortSyncButton.IsEnabled = !bReady;
+                        //SettingsButton.IsEnabled = bReady;
                         break;
                     case "SelectedDefinition":
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
@@ -233,6 +234,7 @@ namespace RoboSync
         {
             Cursor = Cursors.Wait;
             DataGrid dataGrid = (DataGrid)sender;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = (Definition)dataGrid.SelectedItem;
             Cursor = null;
         }
@@ -246,6 +248,7 @@ namespace RoboSync
         private void Button_AddClick(object sender, RoutedEventArgs e)
         {
             Definitions.Add(new Definition() { Label = "Definition" + (Definitions.Count + 1) });
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -262,6 +265,7 @@ namespace RoboSync
                 copy.Folders.Add(new Folder() { Include = folder.Include, Path = folder.Path, Size = folder.Size});
             }
             Definitions.Add(copy);
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -275,6 +279,7 @@ namespace RoboSync
                 index = 0;
                 Definitions.Add(new Definition() { Label = "Default Definition" });
             }
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions[index];
         }
 
