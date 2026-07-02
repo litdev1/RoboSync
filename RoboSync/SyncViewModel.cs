@@ -1,17 +1,12 @@
-﻿using RoboSync;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Timers;
-using System.Windows.Controls;
 using System.Xml.Serialization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoboSync
 {
@@ -35,7 +30,7 @@ namespace RoboSync
 
         public Version? Version
         {
-            get { return Assembly.GetExecutingAssembly().GetName().Version; }
+            get { return new Version(1,1,0,0); }
         }
 
         public int Status
@@ -238,7 +233,6 @@ namespace RoboSync
                     definitions += "#";
                 }
                 Properties.Settings.Default.Definitions = definitions;
-                Properties.Settings.Default.Save();
             }
             else
             {
@@ -248,7 +242,6 @@ namespace RoboSync
                     XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
                     serializer.Serialize(writer, Definitions);
                     Properties.Settings.Default.Definitions = definitions.ToString();
-                    Properties.Settings.Default.Save();
                 }
             }
         }
