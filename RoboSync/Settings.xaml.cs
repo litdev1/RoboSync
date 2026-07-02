@@ -34,6 +34,7 @@ namespace RoboSync
             App.IsFastStart = Properties.Settings.Default.IsFastStart;
             App.IsMinimised = Properties.Settings.Default.IsMinimised;
             App.IsRun = Properties.Settings.Default.IsRun;
+            App.IsMultipleInstances = Properties.Settings.Default.IsMultipleInstances;
 
             SettingsData.Clear();
             SettingsData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift key to omit folder size calculations for other operations that load a definition", Value = App.IsStartup });
@@ -41,6 +42,7 @@ namespace RoboSync
             SettingsData.Add(new SettingData() { Label = "IsStartup", Switch = "/S[-]", Description = "Start RoboSync when system starts", Value = App.IsStartup });
             SettingsData.Add(new SettingData() { Label = "IsMinimised", Switch = "/M[-]", Description = "Start the window minimised", Value = App.IsMinimised });
             SettingsData.Add(new SettingData() { Label = "IsSysTray", Switch = "/T[-]", Description = "Add icon to the system tray and hide when minimised, right click system tray icon to exit", Value = App.IsSysTray });
+            SettingsData.Add(new SettingData() { Label = "IsMultipleInstances", Switch = "/I[-]", Description = "Allow multiple instances of application", Value = App.IsMultipleInstances });
             SettingsDataGrid.ItemsSource = SettingsData;
         }
 
@@ -51,6 +53,7 @@ namespace RoboSync
             App.IsStartup = SettingsData[2].Value;
             App.IsMinimised = SettingsData[3].Value;
             App.IsSysTray = SettingsData[4].Value;
+            App.IsMultipleInstances = SettingsData[5].Value;
 
             Utilities.AppSettings();
 
@@ -59,6 +62,7 @@ namespace RoboSync
             Properties.Settings.Default.IsFastStart = App.IsFastStart;
             Properties.Settings.Default.IsMinimised = App.IsMinimised;
             Properties.Settings.Default.IsRun = App.IsRun;
+            Properties.Settings.Default.IsMultipleInstances = App.IsMultipleInstances;
             Properties.Settings.Default.Save();
         }
     }

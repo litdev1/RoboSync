@@ -3,10 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Timer = System.Timers.Timer;
 
 namespace RoboSync
 {
@@ -16,7 +18,7 @@ namespace RoboSync
     public partial class MainWindow : Window
     {
         private SyncViewModel syncViewModel;
-
+        private Timer timer;
         public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
         private Definition? SelectedDefinition = null;
 
@@ -104,6 +106,11 @@ namespace RoboSync
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            timer = new Timer();
+            timer.Elapsed += new ElapsedEventHandler(DoTimer);
+            timer.Interval = 1000;
+            timer.Enabled = true;
+
             try
             {
                 syncViewModel.Version = new Version(1, 0, 0, 0);
@@ -133,6 +140,11 @@ namespace RoboSync
             catch (Exception)
             {
             }
+        }
+
+        private void DoTimer(object? sender, ElapsedEventArgs e)
+        {
+            CheckOutputLocation();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -171,6 +183,11 @@ namespace RoboSync
         }
 
         private void OutputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckOutputLocation();
+        }
+
+        private void CheckOutputLocation()
         {
             if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
             SelectedDefinition.Output = OutputTextBox.Text;
@@ -339,6 +356,7 @@ namespace RoboSync
             {
                 Hide();
             }
+            timer.Enabled = WindowState != WindowState.Minimized;
         }
 
         private void Button_SettingsClick(object sender, RoutedEventArgs e)
