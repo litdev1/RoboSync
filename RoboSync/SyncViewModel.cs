@@ -126,7 +126,7 @@ namespace RoboSync
                 "Also check the Output Folder files after the first run to be certain\n\n" +
                 "Multiple definitions may be used to sync different sets of folders\n" +
                 "Progress calculations are approximate to keep performance optimal\n" +
-                "The ROBOCOPY commands may be exported to clipboard for use directly\n" +
+                "ROBOCOPY commands may be exported to Desktop/RoboSync.bat for use directly\n" +
                 "Recommend closing other applications first - locked files are not copied\n" +
                 "Definitions may be scheduled (Tack Scheduler) to be synced daily or weekly\n" +
                 "RoboSync does not need to be running to perform scheduled sync backups\n";
