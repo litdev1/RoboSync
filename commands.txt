@@ -1,0 +1,16 @@
+chkdsk E: /F /X
+
+SCHTASKS /CREATE /SC DAILY /TN "Backup\RoboSync" /TR "'C:\Program Files\RoboSync\RoboSync.exe' /R" /ST 02:00
+
+SCHTASKS /DELETE /F /TN "Backup\RoboSync"
+
+Get-ScheduledTask "RoboSync/*" | Unregister-ScheduledTask
+
+For /F "Tokens=1*Delims=\" %# In ('SchTasks /Query /FO List^|Find /I "RoboSync\"')Do @SchTasks /Delete /TN "%$" /F
+
+                <!--<DataGridComboBoxColumn Header="Day" SelectedItemBinding="{Binding Day, Mode=TwoWay}" Width="*"
+                            ItemsSource="{Binding Source={StaticResource dayEnum}}"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding Time, Mode=TwoWay}" Width="*"/>-->
+
+
+For /F "Tokens=1*Delims=\" %# In ('SchTasks /Query /FO List^|Find /I "RoboSync\"')Do Echo "%$"

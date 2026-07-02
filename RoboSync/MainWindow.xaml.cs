@@ -113,8 +113,6 @@ namespace RoboSync
 
             try
             {
-                syncViewModel.Version = new Version(1, 0, 0, 0);
-
                 Utilities.AppSettings();
 
                 if (App.IsSysTray)
@@ -164,6 +162,7 @@ namespace RoboSync
             Properties.Settings.Default.WinLeft = Left;
             Properties.Settings.Default.WinWidth = Width;
             Properties.Settings.Default.WinHeight = Height;
+            Properties.Settings.Default.Version = syncViewModel.Version.ToString();
 
             syncViewModel.SaveDefinitions();
             syncViewModel.EndSync();

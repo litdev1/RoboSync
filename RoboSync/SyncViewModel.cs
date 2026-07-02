@@ -3,10 +3,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows.Controls;
+using System.Xml.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoboSync
@@ -86,6 +89,7 @@ namespace RoboSync
         public SyncViewModel(ObservableCollection<Definition> _Definitions)
         {
             Definitions = _Definitions;
+            Version = new Version(1, 1, 0, 0);
         }
 
         private void ModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -131,81 +135,124 @@ namespace RoboSync
                 "Definitions may be scheduled (Tack Scheduler) to be synced daily or weekly\n" +
                 "RoboSync does not need to be running to perform scheduled sync backups\n";
 
-            string definitions = Properties.Settings.Default.Definitions;
-            string[] definitionArray = definitions.Split('#', StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string definitionString in definitionArray)
+            var saveVersion = Version;
+            if (!Version.TryParse(Properties.Settings.Default.Version, out saveVersion))
             {
-                string[] parts = definitionString.Split('@', StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length >= 2)
+                saveVersion = new Version(1, 0, 0, 0);
+            }
+            if (saveVersion <= new Version(1, 0, 0, 0))
+            {
+                string definitions = Properties.Settings.Default.Definitions;
+                string[] definitionArray = definitions.Split('#', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string definitionString in definitionArray)
                 {
-                    Definition definition = new Definition() { Label = parts[0], Output = parts[1] };
-                    if (parts.Length >= 3)
+                    string[] parts = definitionString.Split('@', StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length >= 2)
                     {
-                        string[] folderStrings = parts[2].Split(';', StringSplitOptions.RemoveEmptyEntries);
-                        foreach (string folderString in folderStrings)
+                        Definition definition = new Definition() { Label = parts[0], Output = parts[1] };
+                        if (parts.Length >= 3)
                         {
-                            string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                            if (folderParts.Length == 3)
+                            string[] folderStrings = parts[2].Split(';', StringSplitOptions.RemoveEmptyEntries);
+                            foreach (string folderString in folderStrings)
                             {
-                                long size = 0;
-                                long.TryParse(folderParts[2], out size);
-                                bool include = true;
-                                bool.TryParse(folderParts[1], out include);
-                                definition.Folders.Add(new Folder()
+                                string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                                if (folderParts.Length == 3)
                                 {
-                                    Path = folderParts[0],
-                                    Include = include,
-                                    Size = size
-                                });
+                                    long size = 0;
+                                    long.TryParse(folderParts[2], out size);
+                                    bool include = true;
+                                    bool.TryParse(folderParts[1], out include);
+                                    definition.Folders.Add(new Folder()
+                                    {
+                                        Path = folderParts[0],
+                                        Include = include,
+                                        Size = size
+                                    });
+                                }
                             }
                         }
+                        if (parts.Length >= 6)
+                        {
+                            definition.Schedule = bool.Parse(parts[3]);
+                            Days day = Days.Daily;
+                            Enum.TryParse(parts[4], out day);
+                            definition.Day = day;
+                            TimeOnly time = new TimeOnly(2, 0);
+                            TimeOnly.TryParse(parts[5], out time);
+                            definition.Time = time;
+                        }
+                        Definitions.Add(definition);
                     }
-                    if (parts.Length >= 6)
-                    {
-                        definition.Schedule = bool.Parse(parts[3]);
-                        Days day = Days.Daily;
-                        Enum.TryParse(parts[4], out day);
-                        definition.Day = day;
-                        TimeOnly time = new TimeOnly(2, 0);
-                        TimeOnly.TryParse(parts[5], out time);
-                        definition.Time = time;
-                    }
-                    Definitions.Add(definition);
                 }
             }
+            else
+            {
+                var serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
+                ObservableCollection<Definition> tempDefinitions = null;
+
+                using (TextReader reader = new StringReader(Properties.Settings.Default.Definitions))
+                {
+                    var result = serializer.Deserialize(reader);
+                    if (null != result)
+                    {
+                        tempDefinitions = (ObservableCollection<Definition>)result;
+                    }
+                }
+                if (null != tempDefinitions)
+                {
+                    foreach (var tempDefinition in tempDefinitions)
+                    {
+                        Definitions.Add(tempDefinition);
+                    }
+                }
+            }
+
             if (Definitions.Count == 0)
             {
                 Definitions.Add(new Definition() { Label = "Default" });
             }
-
             SelectedDefinition = Definitions[0];
         }
 
         public void SaveDefinitions()
         {
-            string definitions = "";
-            foreach (Definition definition in Definitions)
+            if (Version <= new Version(1, 0, 0, 0))
             {
-                if (definition.Folders.Count == 0) continue;
-                if (definition.Label == string.Empty)
+                string definitions = "";
+                foreach (Definition definition in Definitions)
                 {
-                    definition.Label = "Default Definition";
+                    if (definition.Folders.Count == 0) continue;
+                    if (definition.Label == string.Empty)
+                    {
+                        definition.Label = "Default Definition";
+                    }
+                    definitions += definition.Label + "@";
+                    definitions += definition.Output + "@";
+                    foreach (Folder folder in definition.Folders)
+                    {
+                        definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size.ToString() + ";";
+                    }
+                    definitions += "@";
+                    definitions += definition.Schedule + "@";
+                    definitions += definition.Day + "@";
+                    definitions += definition.Time + "@";
+                    definitions += "#";
                 }
-                definitions += definition.Label + "@";
-                definitions += definition.Output + "@";
-                foreach (Folder folder in definition.Folders)
-                {
-                    definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size.ToString() + ";";
-                }
-                definitions += "@";
-                definitions += definition.Schedule + "@";
-                definitions += definition.Day + "@";
-                definitions += definition.Time + "@";
-                definitions += "#";
+                Properties.Settings.Default.Definitions = definitions;
+                Properties.Settings.Default.Save();
             }
-            Properties.Settings.Default.Definitions = definitions;
-            Properties.Settings.Default.Save();
+            else
+            {
+                StringBuilder definitions = new StringBuilder();
+                using (var writer = new StringWriter(definitions))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
+                    serializer.Serialize(writer, Definitions);
+                    Properties.Settings.Default.Definitions = definitions.ToString();
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
 
         public void DoSync(bool bAll = false)
