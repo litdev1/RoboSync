@@ -36,11 +36,11 @@ namespace RoboSync
             App.IsRun = Properties.Settings.Default.IsRun;
 
             SettingsData.Clear();
-            SettingsData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift key to omit folder size calculations for other operations that load a definition", Value = Properties.Settings.Default.IsFastStart });
-            SettingsData.Add(new SettingData() { Label = "IsRun", Switch = "/R[-]", Description = "Run a full sync when started", Value = Properties.Settings.Default.IsRun });
-            SettingsData.Add(new SettingData() { Label = "IsStartup", Switch = "/S[-]", Description = "Start RoboSync when system starts", Value = Properties.Settings.Default.IsStartup });
-            SettingsData.Add(new SettingData() { Label = "IsMinimised", Switch = "/M[-]", Description = "Start the window minimised", Value = Properties.Settings.Default.IsMinimised });
-            SettingsData.Add(new SettingData() { Label = "IsSysTray", Switch = "/T[-]", Description = "Add icon to the system tray and hide when minimised, right click system tray icon to exit", Value = Properties.Settings.Default.IsSysTray });
+            SettingsData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift key to omit folder size calculations for other operations that load a definition", Value = App.IsStartup });
+            SettingsData.Add(new SettingData() { Label = "IsRun", Switch = "/R[-]", Description = "Run a full sync when started", Value = App.IsRun });
+            SettingsData.Add(new SettingData() { Label = "IsStartup", Switch = "/S[-]", Description = "Start RoboSync when system starts", Value = App.IsStartup });
+            SettingsData.Add(new SettingData() { Label = "IsMinimised", Switch = "/M[-]", Description = "Start the window minimised", Value = App.IsMinimised });
+            SettingsData.Add(new SettingData() { Label = "IsSysTray", Switch = "/T[-]", Description = "Add icon to the system tray and hide when minimised, right click system tray icon to exit", Value = App.IsSysTray });
             SettingsDataGrid.ItemsSource = SettingsData;
         }
 

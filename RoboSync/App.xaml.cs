@@ -46,6 +46,7 @@ namespace RoboSync
             var otherProc = Process.GetProcessesByName(thisProc.ProcessName);
             if (otherProc.Length > 1)
             {
+                IsFastStart = true;
                 MessageBox.Show("RoboSync is already running", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Current.Shutdown();
             }

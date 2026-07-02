@@ -311,7 +311,9 @@ namespace RoboSync
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             if (null == syncViewModel.SelectedDefinition) return;
-            syncViewModel.SelectedDefinition.Schedule = (bool)((CheckBox)sender).IsChecked;
+            var checkbox = (CheckBox)sender;
+            if (null == checkbox.IsChecked) return;
+            syncViewModel.SelectedDefinition.Schedule = (bool)checkbox.IsChecked;
             syncViewModel.UpdateSchedule();
         }
 
