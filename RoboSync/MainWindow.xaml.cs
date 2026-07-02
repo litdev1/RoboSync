@@ -162,7 +162,7 @@ namespace RoboSync
             Properties.Settings.Default.WinLeft = Left;
             Properties.Settings.Default.WinWidth = Width;
             Properties.Settings.Default.WinHeight = Height;
-            Properties.Settings.Default.Version = syncViewModel.Version.ToString();
+            Properties.Settings.Default.Version = syncViewModel.Version?.ToString();
 
             syncViewModel.SaveDefinitions();
             syncViewModel.EndSync();

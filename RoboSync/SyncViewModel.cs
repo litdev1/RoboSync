@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -32,11 +33,9 @@ namespace RoboSync
             set { selectedDefinition = value; OnPropertyChanged(); }
         }
 
-        private Version _version;
-        public Version Version
+        public Version? Version
         {
-            get { return _version; }
-            set { _version = value; OnPropertyChanged(); }
+            get { return Assembly.GetExecutingAssembly().GetName().Version; }
         }
 
         public int Status
@@ -89,7 +88,6 @@ namespace RoboSync
         public SyncViewModel(ObservableCollection<Definition> _Definitions)
         {
             Definitions = _Definitions;
-            Version = new Version(1, 1, 0, 0);
         }
 
         private void ModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -189,7 +187,7 @@ namespace RoboSync
             else
             {
                 var serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
-                ObservableCollection<Definition> tempDefinitions = null;
+                ObservableCollection<Definition>? tempDefinitions = null;
 
                 using (TextReader reader = new StringReader(Properties.Settings.Default.Definitions))
                 {
@@ -393,7 +391,7 @@ namespace RoboSync
                             text += "ROBOCOPY \"" + folder.Path + "\" \"" + output + "\" " + "*.* " + flags + "\n";
                         }
                     }
-                    text += "Pause" + "\n";
+                    text += "pause" + "\n";
                     File.WriteAllText(appData + label + ".bat", text);
 
                     string createTaskCmd = "/CREATE /F /SC " + schedule + " /TN \"RoboSync\\" + label + "\" /TR \"" + appData + label + ".bat\" /ST " + time;
