@@ -30,7 +30,7 @@ namespace RoboSync
 
         public Version? Version
         {
-            get { return new Version(1,1,0,0); }
+            get { return new Version(1,0,0,0); }
         }
 
         public int Status
@@ -133,53 +133,8 @@ namespace RoboSync
             {
                 saveVersion = new Version(1, 0, 0, 0);
             }
-            if (saveVersion <= new Version(1, 0, 0, 0))
-            {
-                string definitions = Properties.Settings.Default.Definitions;
-                string[] definitionArray = definitions.Split('#', StringSplitOptions.RemoveEmptyEntries);
 
-                foreach (string definitionString in definitionArray)
-                {
-                    string[] parts = definitionString.Split('@', StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 2)
-                    {
-                        Definition definition = new Definition() { Label = parts[0], Output = parts[1] };
-                        if (parts.Length >= 3)
-                        {
-                            string[] folderStrings = parts[2].Split(';', StringSplitOptions.RemoveEmptyEntries);
-                            foreach (string folderString in folderStrings)
-                            {
-                                string[] folderParts = folderString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-                                if (folderParts.Length == 3)
-                                {
-                                    long size = 0;
-                                    long.TryParse(folderParts[2], out size);
-                                    bool include = true;
-                                    bool.TryParse(folderParts[1], out include);
-                                    definition.Folders.Add(new Folder()
-                                    {
-                                        Path = folderParts[0],
-                                        Include = include,
-                                        Size = size
-                                    });
-                                }
-                            }
-                        }
-                        if (parts.Length >= 6)
-                        {
-                            definition.Schedule = bool.Parse(parts[3]);
-                            Days day = Days.Daily;
-                            Enum.TryParse(parts[4], out day);
-                            definition.Day = day;
-                            TimeOnly time = new TimeOnly(2, 0);
-                            TimeOnly.TryParse(parts[5], out time);
-                            definition.Time = time;
-                        }
-                        Definitions.Add(definition);
-                    }
-                }
-            }
-            else
+            try
             {
                 var serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
                 ObservableCollection<Definition>? tempDefinitions = null;
@@ -200,6 +155,9 @@ namespace RoboSync
                     }
                 }
             }
+            catch
+            {
+            }
 
             if (Definitions.Count == 0)
             {
@@ -211,30 +169,6 @@ namespace RoboSync
         public void SaveDefinitions()
         {
             if (Version <= new Version(1, 0, 0, 0))
-            {
-                string definitions = "";
-                foreach (Definition definition in Definitions)
-                {
-                    if (definition.Folders.Count == 0) continue;
-                    if (definition.Label == string.Empty)
-                    {
-                        definition.Label = "Default Definition";
-                    }
-                    definitions += definition.Label + "@";
-                    definitions += definition.Output + "@";
-                    foreach (Folder folder in definition.Folders)
-                    {
-                        definitions += folder.Path + "," + folder.Include.ToString() + "," + folder.Size.ToString() + ";";
-                    }
-                    definitions += "@";
-                    definitions += definition.Schedule + "@";
-                    definitions += definition.Day + "@";
-                    definitions += definition.Time + "@";
-                    definitions += "#";
-                }
-                Properties.Settings.Default.Definitions = definitions;
-            }
-            else
             {
                 StringBuilder definitions = new StringBuilder();
                 using (var writer = new StringWriter(definitions))
