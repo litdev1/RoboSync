@@ -50,9 +50,9 @@
                     <DataGrid x:Name="DefinitionsDataGrid" Margin="4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                           SelectionChanged="DefinitionsDataGrid_SelectionChanged" LostFocus="DefinitionsDataGrid_LostFocus">
                         <DataGrid.Resources>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#6688AA"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#6688AA"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
                         </DataGrid.Resources>
                         <DataGrid.ColumnHeaderStyle>
@@ -73,18 +73,19 @@
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <ScrollViewer  Grid.Column="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel >
-                    <Grid Margin="4" Height="30" >
+                    <Grid Margin="4" Height="50" >
                         <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
-                        <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,54,4" TextChanged="OutputTextBox_TextChanged"/>
-                        <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,4" ToolTip="Browse to set the output location where copied files will be saved"/>
+                        <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,55,24" TextChanged="OutputTextBox_TextChanged"/>
+                        <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,24" ToolTip="Browse to set the output location where copied files will be saved"/>
+                        <TextBlock x:Name="OutputInfoTextBox" Margin="89,31,0,-3" Text ="(8888888 MB free)" HorizontalAlignment="Left" Width="102"/>
                     </Grid>
-                    <Border CornerRadius="5" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="2">
-                        <TextBlock x:Name="DefinitionLabel"/>
+                    <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
+                        <TextBlock x:Name="DefinitionLabel" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
                     <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                     Margin="4">
                         <DataGrid.Resources>
-                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#6688AA"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
                         </DataGrid.Resources>
                         <DataGrid.ColumnHeaderStyle>
@@ -97,13 +98,8 @@
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
-                            <DataGridTextColumn Header="Input Path" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Input Folder" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
                             <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
-                                <DataGridTextColumn.CellStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.HorizontalAlignment" Value="Right"/>
-                                    </Style>
-                                </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
                             <DataGridTemplateColumn Header="Browse">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -135,8 +131,8 @@
                     <TextBlock x:Name="TimeProgressTextBox" TextAlignment="Center" Margin="4" Text="{Binding ProgressTime}"/>
                 </Grid>
             </Border>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#3388AA" Value="{Binding Progress2}"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#3388AA" Value="{Binding Progress1}"/>
+            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#6688AA" Value="{Binding Progress2}"/>
+            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#6688AA" Value="{Binding Progress1}"/>
         </Grid>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource LightBrush}"/>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource LightBrush}"/>

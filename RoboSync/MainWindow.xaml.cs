@@ -108,7 +108,7 @@ namespace RoboSync
         {
             timer = new Timer();
             timer.Elapsed += new ElapsedEventHandler(DoTimer);
-            timer.Interval = 1000;
+            timer.Interval = 5000;
             timer.Enabled = true;
 
             try
@@ -189,28 +189,42 @@ namespace RoboSync
 
         private void CheckOutputLocation()
         {
-            if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
-            SelectedDefinition.Output = OutputTextBox.Text;
-            var drive = SelectedDefinition.Output.ToUpper().Substring(0, 1);
-            if (drive == "C" || !IsReadyDrive(drive))
+            Dispatcher.Invoke(() =>
             {
-                OutputTextBox.Foreground = new SolidColorBrush(Colors.Red);
-            }
-            else
-            {
-                OutputTextBox.Foreground = Directory.Exists(OutputTextBox.Text) ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.Blue);
-            }
+                if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
+                SelectedDefinition.Output = OutputTextBox.Text;
+                var drive = SelectedDefinition.Output.ToUpper().Substring(0, 1);
+                var driveInfo = IsReadyDrive(drive);
+                if (drive == "C" || !driveInfo.Item1)
+                {
+                    OutputTextBox.Foreground = new SolidColorBrush(Colors.Red);
+                }
+                else
+                {
+                    OutputTextBox.Foreground = Directory.Exists(OutputTextBox.Text) ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.Blue);
+                }
+                OutputInfoTextBox.Text = driveInfo.Item2;
+            });
         }
 
-        private bool IsReadyDrive(string driveLetter)
+        private Tuple<bool, string> IsReadyDrive(string driveLetter)
         {
             try
             {
-                return new DriveInfo(driveLetter).IsReady;
+                var driveInfo = new DriveInfo(driveLetter);
+                if (driveInfo.IsReady)
+                {
+                    var space = driveInfo.AvailableFreeSpace / 1024 / 1024;
+                    return Tuple.Create(driveInfo.IsReady, "(" + space.ToString("0.#") + " MB Free)");
+                }
+                else
+                {
+                    return Tuple.Create(false, "(Not Available)");
+                }
             }
             catch (ArgumentException)
             {
-                return false;
+                return Tuple.Create(false, "(Not Available)");
             }
         }
 
