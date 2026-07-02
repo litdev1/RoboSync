@@ -28,11 +28,11 @@ namespace RoboSync
 
             for (int i = 0; i != e.Args.Length; ++i)
             {
-                IsStartup = ArgCheck(e.Args[i], "S");
-                IsSysTray = ArgCheck(e.Args[i], "T");
-                IsFastStart = ArgCheck(e.Args[i], "F");
-                IsMinimised = ArgCheck(e.Args[i], "M");
-                IsRun = ArgCheck(e.Args[i], "R");
+                IsStartup = ArgCheck(e.Args[i], "S", IsStartup);
+                IsSysTray = ArgCheck(e.Args[i], "T", IsSysTray);
+                IsFastStart = ArgCheck(e.Args[i], "F", IsFastStart);
+                IsMinimised = ArgCheck(e.Args[i], "M", IsMinimised);
+                IsRun = ArgCheck(e.Args[i], "R", IsRun);
             }
 
             ProjectSettings.Default.IsStartup = IsStartup;
@@ -52,11 +52,13 @@ namespace RoboSync
             }
         }
 
-        private bool ArgCheck(string arg, string s)
+        private bool ArgCheck(string arg, string s, bool bValue)
         {
-            bool ret = false;
-            ret |= arg.ToUpper().StartsWith("/" + s);
-            ret &= !(arg.ToUpper().StartsWith("/" + s) && arg.ToUpper().EndsWith("-"));
+            bool ret = bValue;
+            if (arg.ToUpper().StartsWith("/" + s))
+            {
+                ret = !arg.ToUpper().EndsWith("-");
+            }
             return ret;
         }
     }
