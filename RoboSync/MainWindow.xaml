@@ -116,6 +116,7 @@
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
+                            <DataGridTextColumn Header="Threads" Binding="{Binding Threads, Mode=TwoWay}" Width="Auto"/>
                             <DataGridTextColumn Header="Input Folder" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
                             <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
                             </DataGridTextColumn>

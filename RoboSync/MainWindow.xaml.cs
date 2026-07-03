@@ -292,7 +292,7 @@ namespace RoboSync
             copy.Time = SelectedDefinition.Time;
             foreach (var folder in SelectedDefinition.Folders)
             {
-                copy.Folders.Add(new Folder() { Include = folder.Include, Path = folder.Path, Size = folder.Size});
+                copy.Folders.Add(new Folder() { Include = folder.Include, Threads = folder.Threads, Path = folder.Path, Size = folder.Size});
             }
             Definitions.Add(copy);
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
@@ -390,7 +390,7 @@ namespace RoboSync
             string text = "";
             foreach (var folder in syncViewModel.SelectedDefinition.Folders)
             {
-                text += folder.Include.ToString() + "\t" + folder.Path + "\t" + folder.Size.ToString() + "\n";
+                text += folder.Include.ToString() + "\t" + folder.Threads.ToString() + "\t" + folder.Path + "\t" + folder.Size.ToString() + "\n";
             }
             Clipboard.SetText(text);
         }
@@ -411,13 +411,14 @@ namespace RoboSync
                 foreach (var folderData in folders)
                 {
                     var data = folderData.Split([ ',', '\t' ], StringSplitOptions.RemoveEmptyEntries);
-                    if (data.Length == 3)
+                    if (data.Length == 4)
                     {
                         bool include;
+                        int threads;
                         long size;
-                        if (bool.TryParse(data[0], out include) && long.TryParse(data[2], out size))
+                        if (bool.TryParse(data[0], out include) && int.TryParse(data[1], out threads) && long.TryParse(data[3], out size))
                         {
-                            syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Path = data[1], Size = size });
+                            syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Threads = threads, Path = data[2], Size = size });
                         }
                     }
                 }

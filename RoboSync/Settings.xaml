@@ -7,8 +7,11 @@
         mc:Ignorable="d"
         Title="Settings" Height="450" Width="800" Loaded="Window_Loaded" Closed="Window_Closed" Topmost="True" WindowStartupLocation="CenterOwner">
     <Grid Margin="0" Background="{StaticResource PaleBrush}">
-        <StackPanel>
-            <DataGrid x:Name="SettingsDataGrid" Margin="4,4,4,4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
+        <StackPanel Orientation="Vertical">
+            <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
+                <TextBlock Text="Startup flags" Foreground="White" HorizontalAlignment="Center"/>
+            </Border>
+            <DataGrid x:Name="BoolDataGrid" Margin="4,4,4,4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
@@ -27,7 +30,7 @@
                     <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="Auto" IsReadOnly="true"/>
                     <DataGridTextColumn Header="Startup switch" Binding="{Binding Switch}" Width="Auto" IsReadOnly="true"/>
                     <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" IsReadOnly="true"/>
-                    <DataGridCheckBoxColumn Header="Value" Binding="{Binding Value}" Width="Auto"/>
+                    <DataGridCheckBoxColumn Header="Flag" Binding="{Binding Flag}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

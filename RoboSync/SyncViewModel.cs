@@ -19,7 +19,6 @@ namespace RoboSync
         private ObservableCollection<Definition> Definitions;
 
         private List<Tuple<string, string, string>> commands = new List<Tuple<string, string, string>>();
-        private string flags = "/MIR /J /XJ /MT:" + Environment.ProcessorCount + " /R:0 /W:0 /NDL /NFL /NS /NC /NP"; // "/M "
 
         private Definition? selectedDefinition;
         public Definition? SelectedDefinition
@@ -116,6 +115,7 @@ namespace RoboSync
                 "Step 2:\nUse the table Browse buttons to add source folders to the table\n" +
                 "A size calculation is performed when a locaton is entered with Browse\n" +
                 "Locations may be de-selected using the Include tickbox\n" +
+                "Large files prefer fewer parallel threads (1-128), the default is good\n" +
                 "Delete a location by selecting the table row and pressing the Delete key\n\n" +
                 "Step 3:\nStart the sync - the first sync will take the longest\n" +
                 "Subsequent syncs will only modify updated files\n" +
@@ -201,7 +201,7 @@ namespace RoboSync
                         var output = definition.Output + folder.Path.Split(':').Last();
                         if (folder.Include)
                         {
-                            commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
+                            commands.Add(Tuple.Create(folder.Path, output, "*.* " + Flags(folder)));
                         }
                     }
                 }
@@ -213,10 +213,15 @@ namespace RoboSync
                     var output = SelectedDefinition.Output + folder.Path.Split(':').Last();
                     if (folder.Include)
                     {
-                        commands.Add(Tuple.Create(folder.Path, output, "*.* " + flags));
+                        commands.Add(Tuple.Create(folder.Path, output, "*.* " + Flags(folder)));
                     }
                 }
             }
+        }
+
+        private string Flags(Folder folder)
+        {
+            return "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0 /NDL /NFL /NS /NC /NP"; // "/M "
         }
 
         public void BatchCommands()
@@ -315,7 +320,7 @@ namespace RoboSync
                         var output = definition.Output + folder.Path.Split(':').Last();
                         if (folder.Include)
                         {
-                            text += "ROBOCOPY \"" + folder.Path + "\" \"" + output + "\" " + "*.* " + flags + "\n";
+                            text += "ROBOCOPY \"" + folder.Path + "\" \"" + output + "\" " + "*.* " + Flags(folder) + "\n";
                         }
                     }
                     text += "pause" + "\n";
@@ -343,12 +348,14 @@ namespace RoboSync
         public string Path { get; set; }
         public bool Include { get; set; }
         public long Size { get; set; }
+        public long Threads { get; set; }
 
         public Folder()
         {
             Path = string.Empty;
             Include = true;
             Size = 0;
+            Threads = 32;
         }
     }
 
