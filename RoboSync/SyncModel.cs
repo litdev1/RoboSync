@@ -117,7 +117,7 @@ namespace RoboSync
                 Progress1 = 0;
                 Progress2 = (int)(100 * (i++ / (double)commands.Count));
                 Status = 1;
-                ProgressTime = command.Item1;
+                ProgressTime = command.Item1 + "\n\nEvaluating files to copy";
 
                 //First call get number of bytes that will be copied
                 estimate = "";

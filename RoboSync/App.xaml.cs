@@ -54,7 +54,7 @@ namespace RoboSync
                 if (otherProc.Length > 1)
                 {
                     IsFastStart = true;
-                    MessageBox.Show("RoboSync is already running", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("RoboSync is already running", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
                     Current.Shutdown();
                 }
             }
