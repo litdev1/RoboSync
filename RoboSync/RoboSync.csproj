@@ -19,6 +19,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Copy.ico" />
+    <None Remove="Paste.ico" />
     <None Remove="RoboSync.iss" />
     <None Remove="RoboSync.png" />
   </ItemGroup>
@@ -29,6 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Copy.ico" />
+    <Resource Include="Paste.ico" />
     <Resource Include="RoboSync.png" />
   </ItemGroup>
 

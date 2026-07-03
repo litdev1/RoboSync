@@ -1,0 +1,11 @@
+True	C:\Users\steve\Desktop	138
+True	C:\Users\steve\Documents	152423
+True	C:\Users\steve\Pictures	47138
+True	C:\Users\steve\Music	0
+True	C:\Users\steve\Videos	21122
+True	C:\Users\steve\Downloads\Installed	6387
+True	C:\Users\steve\TS	440
+True	C:\Users\steve\AndroidStudioProjects	22769
+True	C:\Users\steve\source	67880
+True	C:\Users\steve\OneDrive\Records	31
+True	C:\xampp\htdocs	11

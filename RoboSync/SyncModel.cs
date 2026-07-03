@@ -16,6 +16,8 @@ namespace RoboSync
         private double outSize = 0;
         private long numError = 0;
         private string estimate = "";
+        private DateTime startTime = DateTime.Now;
+        private TimeSpan totalTime = TimeSpan.Zero;
 
         private int _status;
         public int Status
@@ -92,6 +94,7 @@ namespace RoboSync
             ReadBytes = "";
             WriteBytes = "";
             ProgressTime = "";
+            totalTime = TimeSpan.Zero;
 
             worker = new BackgroundWorker();
             worker.ProgressChanged += new ProgressChangedEventHandler(ProgressChanged);
@@ -185,9 +188,11 @@ namespace RoboSync
                     }
                 };
                 process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3;
+                startTime = DateTime.Now;
                 process.Start();
                 process.BeginOutputReadLine();
                 process.WaitForExit();
+                totalTime += DateTime.Now - startTime;
                 timer.Enabled = false;
             }
             command = null;
@@ -216,7 +221,7 @@ namespace RoboSync
                     LogLine = Environment.NewLine + estimate + Environment.NewLine;
                     estimate = "";
                 }
-                var runTime = (DateTime.Now - process.StartTime);
+                var runTime = DateTime.Now - startTime;
                 var rates = IoSampler.SampleBytesAsync(process);
                 var readB = rates.Item1;
                 string readUnit = " kByte/s";
@@ -237,8 +242,12 @@ namespace RoboSync
                 long sec = (long)runTime.TotalSeconds;
                 long min = sec / 60;
                 long hour = min / 60;
-                ProgressTime = command.Item1 + "\n\n" + hour.ToString("00") + ":" + (min % 60).ToString("00") +
-                ":" + (sec % 60).ToString("00") + " (H:M:S)";
+                long secT = (long)(totalTime + runTime).TotalSeconds;
+                long minT = secT / 60;
+                long hourT = minT / 60;
+                ProgressTime = command.Item1 + "\n" +
+                    hour.ToString("00") + ":" + (min % 60).ToString("00") + ":" + (sec % 60).ToString("00") + " (H:M:S)\n" +
+                    hourT.ToString("00") + ":" + (minT % 60).ToString("00") + ":" + (secT % 60).ToString("00") + " (Total)";
                 outSize = Dir.GetSize(command.Item2);
 
                 // avoid divide-by-zero if inSize is 0

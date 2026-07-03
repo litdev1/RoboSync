@@ -25,7 +25,7 @@ namespace RoboSync.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"\"")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string Definitions {
             get {
                 return ((string)(this["Definitions"]));
@@ -169,7 +169,7 @@ namespace RoboSync.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("\"\"")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.0.0.0")]
         public string Version {
             get {
                 return ((string)(this["Version"]));

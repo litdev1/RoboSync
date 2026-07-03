@@ -378,6 +378,54 @@ namespace RoboSync
             Settings settings = new Settings();
             settings.ShowDialog();
         }
+
+        private void CanCopy(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = null != syncViewModel.SelectedDefinition && syncViewModel.SelectedDefinition.Folders.Count > 0;
+        }
+
+        private void Copy(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (null == syncViewModel.SelectedDefinition) return;
+            string text = "";
+            foreach (var folder in syncViewModel.SelectedDefinition.Folders)
+            {
+                text += folder.Include.ToString() + "\t" + folder.Path + "\t" + folder.Size.ToString() + "\n";
+            }
+            Clipboard.SetText(text);
+        }
+
+        private void CanPaste(object sender, CanExecuteRoutedEventArgs e)
+        {
+            string clipboardText = Clipboard.GetText();
+            e.CanExecute = !string.IsNullOrEmpty(clipboardText);
+        }
+
+        private void Paste(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (null == syncViewModel.SelectedDefinition) return;
+            try
+            {
+                string clipboardText = Clipboard.GetText();
+                var folders = clipboardText.Split([';', '\n'], StringSplitOptions.RemoveEmptyEntries);
+                foreach (var folderData in folders)
+                {
+                    var data = folderData.Split([ ',', '\t' ], StringSplitOptions.RemoveEmptyEntries);
+                    if (data.Length == 3)
+                    {
+                        bool include;
+                        long size;
+                        if (bool.TryParse(data[0], out include) && long.TryParse(data[2], out size))
+                        {
+                            syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Path = data[1], Size = size });
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
     }
 }
 

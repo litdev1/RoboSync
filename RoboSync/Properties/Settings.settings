@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="Definitions" Type="System.String" Scope="User">
-      <Value Profile="(Default)">""</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="WinState" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Version" Type="System.String" Scope="User">
-      <Value Profile="(Default)">""</Value>
+      <Value Profile="(Default)">1.0.0.0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

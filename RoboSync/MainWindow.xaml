@@ -84,6 +84,24 @@
                     </Border>
                     <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
                     Margin="4">
+                        <DataGrid.CommandBindings>
+                            <CommandBinding Command="{x:Static ApplicationCommands.Paste}" CanExecute="CanPaste" Executed="Paste"/>
+                            <CommandBinding Command="{x:Static ApplicationCommands.Copy}" CanExecute="CanCopy" Executed="Copy"/>
+                        </DataGrid.CommandBindings>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copy All" Command="ApplicationCommands.Copy" CommandTarget="{Binding}">
+                                    <MenuItem.Icon>
+                                        <Image Source="{StaticResource CopyIcon}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="Paste" Command="ApplicationCommands.Paste" CommandTarget="{Binding}">
+                                    <MenuItem.Icon>
+                                        <Image Source="{StaticResource PasteIcon}"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                         <DataGrid.Resources>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#6688AA"/>
                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>

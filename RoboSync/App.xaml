@@ -6,6 +6,10 @@
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
     <Application.Resources>
 
+        <BitmapImage x:Key="AppIcon" UriSource="RoboSync.ico"/>
+        <BitmapImage x:Key="CopyIcon" UriSource="Copy.ico"/>
+        <BitmapImage x:Key="PasteIcon" UriSource="Paste.ico"/>
+
         <SolidColorBrush x:Key="PaleBrush" Color="AliceBlue"/>
         <SolidColorBrush x:Key="LightBrush" Color="#AADDEE"/>
         <LinearGradientBrush x:Key="GradientBrush" StartPoint="0.4,0" EndPoint="0.6,1">
