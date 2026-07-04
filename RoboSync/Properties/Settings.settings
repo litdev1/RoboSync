@@ -41,5 +41,11 @@
     <Setting Name="Version" Type="System.String" Scope="User">
       <Value Profile="(Default)">1.0.0.0</Value>
     </Setting>
+    <Setting Name="ShowDetails" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ShowThreads" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

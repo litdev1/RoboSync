@@ -9,9 +9,9 @@
     <Grid Margin="0" Background="{StaticResource PaleBrush}">
         <StackPanel Orientation="Vertical">
             <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
-                <TextBlock Text="Startup flags" Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Startup options" Foreground="White" HorizontalAlignment="Center"/>
             </Border>
-            <DataGrid x:Name="BoolDataGrid" Margin="4,4,4,4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
+            <DataGrid x:Name="StartupDataGrid" Margin="4,4,4,4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
                 <DataGrid.Resources>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
                     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
@@ -29,6 +29,30 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="Auto" IsReadOnly="true"/>
                     <DataGridTextColumn Header="Startup switch" Binding="{Binding Switch}" Width="Auto" IsReadOnly="true"/>
+                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" IsReadOnly="true"/>
+                    <DataGridCheckBoxColumn Header="Flag" Binding="{Binding Flag}" Width="Auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
+                <TextBlock Text="Folder sync options (display extra columns)" Foreground="White" HorizontalAlignment="Center"/>
+            </Border>
+            <DataGrid x:Name="FolderDataGrid" Margin="4,4,4,4" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False">
+                <DataGrid.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#3388AA"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#3388AA"/>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                </DataGrid.Resources>
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Margin" Value="2"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Label" Binding="{Binding Label}" Width="Auto" IsReadOnly="true"/>
                     <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" IsReadOnly="true"/>
                     <DataGridCheckBoxColumn Header="Flag" Binding="{Binding Flag}" Width="Auto"/>
                 </DataGrid.Columns>

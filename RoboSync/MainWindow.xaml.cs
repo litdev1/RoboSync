@@ -102,6 +102,8 @@ namespace RoboSync
             DataContext = syncViewModel;
             syncViewModel.PropertyChanged += ViewModelPropertyChanged;
             syncViewModel.Initialise();
+            colDetails.Visibility = Properties.Settings.Default.ShowDetails ? Visibility.Visible : Visibility.Collapsed;
+            colThreads.Visibility = Properties.Settings.Default.ShowThreads ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -147,7 +149,7 @@ namespace RoboSync
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (App.IsStartup && !App.CanClose)
+            if (App.IsStartup && !App.CanClose && !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
             {
                 e.Cancel = true;
                 App.CanClose = false;
@@ -375,7 +377,7 @@ namespace RoboSync
 
         private void Button_SettingsClick(object sender, RoutedEventArgs e)
         {
-            Settings settings = new Settings();
+            Settings settings = new Settings(this);
             settings.ShowDialog();
         }
 
@@ -411,15 +413,32 @@ namespace RoboSync
                 foreach (var folderData in folders)
                 {
                     var data = folderData.Split([ ',', '\t' ], StringSplitOptions.RemoveEmptyEntries);
-                    if (data.Length == 4)
+                    bool include;
+                    int threads;
+                    long size;
+                    switch (data.Length)
                     {
-                        bool include;
-                        int threads;
-                        long size;
-                        if (bool.TryParse(data[0], out include) && int.TryParse(data[1], out threads) && long.TryParse(data[3], out size))
-                        {
-                            syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Threads = threads, Path = data[2], Size = size });
-                        }
+                        case 1:
+                            syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Path = data[0] });
+                            break;
+                        case 2:
+                            if (bool.TryParse(data[0], out include))
+                            {
+                                syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Path = data[1]});
+                            }
+                            break;
+                        case 3:
+                            if (bool.TryParse(data[0], out include) && long.TryParse(data[2], out size))
+                            {
+                                syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Path = data[1], Size = size });
+                            }
+                            break;
+                        case 4:
+                            if (bool.TryParse(data[0], out include) && int.TryParse(data[1], out threads) && long.TryParse(data[3], out size))
+                            {
+                                syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Threads = threads, Path = data[2], Size = size });
+                            }
+                            break;
                     }
                 }
             }

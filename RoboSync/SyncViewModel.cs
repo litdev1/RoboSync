@@ -115,7 +115,6 @@ namespace RoboSync
                 "Step 2:\nUse the table Browse buttons to add source folders to the table\n" +
                 "A size calculation is performed when a locaton is entered with Browse\n" +
                 "Locations may be de-selected using the Include tickbox\n" +
-                "Large files prefer fewer parallel threads (1-128), the default is good\n" +
                 "Delete a location by selecting the table row and pressing the Delete key\n\n" +
                 "Step 3:\nStart the sync - the first sync will take the longest\n" +
                 "Subsequent syncs will only modify updated files\n" +
@@ -221,7 +220,7 @@ namespace RoboSync
 
         private string Flags(Folder folder)
         {
-            return "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0 /NDL /NFL /NS /NC /NP"; // "/M "
+            return "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0" + (folder.Details? " /NP" : " /NDL /NFL /NS /NC"); // "/M "
         }
 
         public void BatchCommands()
@@ -320,7 +319,10 @@ namespace RoboSync
                         var output = definition.Output + folder.Path.Split(':').Last();
                         if (folder.Include)
                         {
+                            bool tempDetails = folder.Details;
+                            folder.Details = false;
                             text += "ROBOCOPY \"" + folder.Path + "\" \"" + output + "\" " + "*.* " + Flags(folder) + "\n";
+                            folder.Details = tempDetails;
                         }
                     }
                     text += "pause" + "\n";
@@ -347,6 +349,7 @@ namespace RoboSync
     {
         public string Path { get; set; }
         public bool Include { get; set; }
+        public bool Details { get; set; }
         public long Size { get; set; }
         public long Threads { get; set; }
 
@@ -354,6 +357,7 @@ namespace RoboSync
         {
             Path = string.Empty;
             Include = true;
+            Details = false;
             Size = 0;
             Threads = 32;
         }

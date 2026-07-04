@@ -156,7 +156,7 @@ namespace RoboSync
                         }
                     }
                 };
-                process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + " /L";
+                process.StartInfo.Arguments = "\"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + " /L" + " /NDL /NFL /NS /NC";
                 process.Start();
                 process.BeginOutputReadLine();
                 process.WaitForExit();

@@ -27,7 +27,7 @@
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
                     ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop"/>
             <Button x:Name="SettingsButton" Content="Settings" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_SettingsClick"
-                    ToolTip="Program startup options"/>
+                    ToolTip="Program options"/>
             <Button x:Name="UpdateButton" Content="Check for Updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
                     ToolTip="Go to GitHub source page and check for update"/>
         </StackPanel>
@@ -116,7 +116,8 @@
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
-                            <DataGridTextColumn Header="Threads" Binding="{Binding Threads, Mode=TwoWay}" Width="Auto"/>
+                            <DataGridCheckBoxColumn x:Name="colDetails" Header="Details" Binding="{Binding Details, Mode=TwoWay}" Width="Auto" Visibility="Collapsed"/>
+                            <DataGridTextColumn x:Name="colThreads" Header="Threads" Binding="{Binding Threads, Mode=TwoWay}" Width="Auto" Visibility="Collapsed"/>
                             <DataGridTextColumn Header="Input Folder" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
                             <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
                             </DataGridTextColumn>
