@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Xml.Serialization;
 
 namespace RoboSync
@@ -29,7 +30,7 @@ namespace RoboSync
 
         public Version? Version
         {
-            get { return new Version(1,0,0,0); }
+            get { return new Version(1,1,0,0); }
         }
 
         public int Status
@@ -220,7 +221,29 @@ namespace RoboSync
 
         private string Flags(Folder folder)
         {
-            return "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0" + (folder.Details? " /NP" : " /NDL /NFL /NS /NC"); // "/M "
+            string flags = "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0" + (folder.Details? " /NP" : " /NDL /NFL /NS /NC"); // "/M
+            if (null != SelectedDefinition)
+            {
+                var Xfolder = SelectedDefinition.FolderExclusions.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                if (Xfolder.Length > 0)
+                {
+                    flags += " /XD";
+                    foreach (var x in Xfolder)
+                    {
+                        flags += " \"" + x + "\"";
+                    }
+                }
+                var Xfile = SelectedDefinition.FileExclusions.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                if (Xfile.Length > 0)
+                {
+                    flags += " /XF";
+                    foreach (var x in Xfile)
+                    {
+                        flags += " \"" + x + "\"";
+                    }
+                }
+            }
+            return flags;
         }
 
         public void BatchCommands()
@@ -231,8 +254,8 @@ namespace RoboSync
             {
                 text += "ROBOCOPY \"" + command.Item1 + "\" \"" + command.Item2 + "\" " + command.Item3 + "\n";
             }
-            //Clipboard.Clear();
-            //Clipboard.SetText(text);
+            Clipboard.Clear();
+            Clipboard.SetText(text);
             text += "pause\n";
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\RoboSync.bat";
             File.WriteAllText(path, text);
@@ -371,6 +394,8 @@ namespace RoboSync
         public bool Schedule { get; set; }
         public TimeOnly Time { get; set; }
         public Days Day { get; set; }
+        public string FolderExclusions { get; set; }
+        public string FileExclusions { get; set; }
 
         public Definition()
         {
@@ -380,6 +405,8 @@ namespace RoboSync
             Schedule = false;
             Time = new TimeOnly(2, 0);
             Day = Days.Daily;
+            FolderExclusions = string.Empty;
+            FileExclusions = string.Empty;
         }
     }
 }

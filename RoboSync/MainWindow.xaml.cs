@@ -48,9 +48,7 @@ namespace RoboSync
                         StatusTextBlock.Text = bReady ? "Ready" : "Sync in progress";
                         FullSyncButton.IsEnabled = bReady;
                         AllSyncButton.IsEnabled = bReady;
-                        //ClipboardButton.IsEnabled = bReady;
                         AbortSyncButton.IsEnabled = !bReady;
-                        //SettingsButton.IsEnabled = bReady;
                         break;
                     case "SelectedDefinition":
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
@@ -58,6 +56,8 @@ namespace RoboSync
                         DefinitionsDataGrid.SelectedItem = SelectedDefinition;
                         DefinitionLabel.Text = SelectedDefinition?.Label;
                         OutputTextBox.Text = SelectedDefinition?.Output;
+                        FolderExclusionsTextBox.Text = SelectedDefinition?.FolderExclusions;
+                        FileExclusionsTextBox.Text = SelectedDefinition?.FileExclusions;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
                         if (null == SelectedDefinition || App.IsFastStart)
@@ -292,9 +292,11 @@ namespace RoboSync
             //copy.Schedule = SelectedDefinition.Schedule;
             copy.Day = SelectedDefinition.Day;
             copy.Time = SelectedDefinition.Time;
+            copy.FolderExclusions = SelectedDefinition.FolderExclusions;
+            copy.FileExclusions = SelectedDefinition.FileExclusions;
             foreach (var folder in SelectedDefinition.Folders)
             {
-                copy.Folders.Add(new Folder() { Include = folder.Include, Threads = folder.Threads, Path = folder.Path, Size = folder.Size});
+                copy.Folders.Add(new Folder() { Include = folder.Include, Details = folder.Details, Threads = folder.Threads, Path = folder.Path, Size = folder.Size});
             }
             Definitions.Add(copy);
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
@@ -392,7 +394,8 @@ namespace RoboSync
             string text = "";
             foreach (var folder in syncViewModel.SelectedDefinition.Folders)
             {
-                text += folder.Include.ToString() + "\t" + folder.Threads.ToString() + "\t" + folder.Path + "\t" + folder.Size.ToString() + "\n";
+                text += folder.Include.ToString() + "\t" + folder.Details.ToString() + "\t" + folder.Threads.ToString() + "\t" + 
+                    folder.Path + "\t" + folder.Size.ToString() + "\n";
             }
             Clipboard.SetText(text);
         }
@@ -414,6 +417,7 @@ namespace RoboSync
                 {
                     var data = folderData.Split([ ',', '\t' ], StringSplitOptions.RemoveEmptyEntries);
                     bool include;
+                    bool details;
                     int threads;
                     long size;
                     switch (data.Length)
@@ -439,12 +443,30 @@ namespace RoboSync
                                 syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Threads = threads, Path = data[2], Size = size });
                             }
                             break;
+                        case 5:
+                            if (bool.TryParse(data[0], out include) && bool.TryParse(data[1], out details) && int.TryParse(data[2], out threads) && long.TryParse(data[4], out size))
+                            {
+                                syncViewModel.SelectedDefinition.Folders.Add(new Folder() { Include = include, Details = details, Threads = threads, Path = data[3], Size = size });
+                            }
+                            break;
                     }
                 }
             }
             catch
             {
             }
+        }
+
+        private void FolderXTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (null == SelectedDefinition) return;
+            SelectedDefinition.FolderExclusions = FolderExclusionsTextBox.Text;
+        }
+
+        private void FileXTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (null == SelectedDefinition) return;
+            SelectedDefinition.FileExclusions = FileExclusionsTextBox.Text;
         }
     }
 }

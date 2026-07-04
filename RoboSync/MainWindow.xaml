@@ -25,7 +25,7 @@
             <Button x:Name="AllSyncButton" Content="Sync All" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AllSyncClick" Width="75" ToolTip="Sync all definitions"/>
             <Button x:Name="AbortSyncButton" Content="Abort Sync" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Click="Button_AbortSyncClick" Width="75" ToolTip="Abort current sync copy"/>
             <Button x:Name="ClipboardButton" Content="Batch Commands" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_BatchCommandsClick"
-                    ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop"/>
+                    ToolTip="Copy sync command(s) to 'RoboSync.bat' on desktop and to Clipboard"/>
             <Button x:Name="SettingsButton" Content="Settings" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_SettingsClick"
                     ToolTip="Program options"/>
             <Button x:Name="UpdateButton" Content="Check for Updates" Margin="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="110" Click="Button_UpdatesClick"
@@ -138,6 +138,16 @@
                         <Label Content="Time" Margin="257,0,0,0" HorizontalAlignment="Left" RenderTransformOrigin="-0.41,0.546"/>
                         <TextBox Margin="298,3,0,5" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
                     </Grid>
+                    <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
+                        <TextBlock Text="Folder exclusions - ; separated list with wildcard *, e.g. *temp*;.vs" Foreground="White" HorizontalAlignment="Center"/>
+                    </Border>
+                    <TextBox x:Name="FolderExclusionsTextBox" Margin="4" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" Height="60" VerticalScrollBarVisibility="Auto"
+                             TextChanged="FolderXTextBox_TextChanged"/>
+                    <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
+                        <TextBlock Text="File exclusions - ; separated list with wildcard *, e.g. *.tmp;*_Copy.*" Foreground="White" HorizontalAlignment="Center"/>
+                    </Border>
+                    <TextBox x:Name="FileExclusionsTextBox" Margin="4" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" Height="60" VerticalScrollBarVisibility="Auto"
+                             TextChanged="FileXTextBox_TextChanged"/>
                 </StackPanel>
             </ScrollViewer>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
