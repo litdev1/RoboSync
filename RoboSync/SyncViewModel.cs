@@ -168,15 +168,12 @@ namespace RoboSync
 
         public void SaveDefinitions()
         {
-            if (Version <= new Version(1, 0, 0, 0))
+            StringBuilder definitions = new StringBuilder();
+            using (var writer = new StringWriter(definitions))
             {
-                StringBuilder definitions = new StringBuilder();
-                using (var writer = new StringWriter(definitions))
-                {
-                    XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
-                    serializer.Serialize(writer, Definitions);
-                    Properties.Settings.Default.Definitions = definitions.ToString();
-                }
+                XmlSerializer serializer = new XmlSerializer(typeof(ObservableCollection<Definition>));
+                serializer.Serialize(writer, Definitions);
+                Properties.Settings.Default.Definitions = definitions.ToString();
             }
         }
 
@@ -224,7 +221,7 @@ namespace RoboSync
             string flags = "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0" + (folder.Details? " /NP" : " /NDL /NFL /NS /NC"); // "/M
             if (null != SelectedDefinition)
             {
-                var Xfolder = SelectedDefinition.FolderExclusions.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                var Xfolder = SelectedDefinition.FolderExclusions.Split([',', ';', '\n'], StringSplitOptions.RemoveEmptyEntries);
                 if (Xfolder.Length > 0)
                 {
                     flags += " /XD";
@@ -233,7 +230,7 @@ namespace RoboSync
                         flags += " \"" + x + "\"";
                     }
                 }
-                var Xfile = SelectedDefinition.FileExclusions.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                var Xfile = SelectedDefinition.FileExclusions.Split([',', ';', '\n'], StringSplitOptions.RemoveEmptyEntries);
                 if (Xfile.Length > 0)
                 {
                     flags += " /XF";

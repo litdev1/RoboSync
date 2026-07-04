@@ -139,15 +139,15 @@
                         <TextBox Margin="298,3,0,5" Text="{Binding SelectedDefinition.Time}" Width="100" HorizontalAlignment="Left" LostFocus="TextBox_LostFocus"/>
                     </Grid>
                     <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
-                        <TextBlock Text="Folder exclusions - ; separated list with wildcard *, e.g. *temp*;.vs" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Folder exclusions - ; separated list with wildcard *, e.g. *temp*;.git" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBox x:Name="FolderExclusionsTextBox" Margin="4" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" Height="60" VerticalScrollBarVisibility="Auto"
-                             TextChanged="FolderXTextBox_TextChanged"/>
+                             TextChanged="FolderXTextBox_TextChanged" AcceptsReturn="True"/>
                     <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
-                        <TextBlock Text="File exclusions - ; separated list with wildcard *, e.g. *.tmp;*_Copy.*" Foreground="White" HorizontalAlignment="Center"/>
+                        <TextBlock Text="File exclusions - ; separated list with wildcard *, e.g. *.obj;*.tmp;*_Copy.*" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBox x:Name="FileExclusionsTextBox" Margin="4" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" Height="60" VerticalScrollBarVisibility="Auto"
-                             TextChanged="FileXTextBox_TextChanged"/>
+                             TextChanged="FileXTextBox_TextChanged" AcceptsReturn="True"/>
                 </StackPanel>
             </ScrollViewer>
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="3" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
