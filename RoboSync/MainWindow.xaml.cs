@@ -149,7 +149,7 @@ namespace RoboSync
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (App.IsStartup && !App.CanClose && !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
+            if (App.IsStartup && !App.CanClose && !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)))
             {
                 e.Cancel = true;
                 App.CanClose = false;
@@ -266,7 +266,7 @@ namespace RoboSync
         {
             Cursor = Cursors.Wait;
             DataGrid dataGrid = (DataGrid)sender;
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = (Definition)dataGrid.SelectedItem;
             Cursor = null;
         }
@@ -280,7 +280,7 @@ namespace RoboSync
         private void Button_AddClick(object sender, RoutedEventArgs e)
         {
             Definitions.Add(new Definition() { Label = "Definition" + (Definitions.Count + 1) });
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -299,7 +299,7 @@ namespace RoboSync
                 copy.Folders.Add(new Folder() { Include = folder.Include, Details = folder.Details, Threads = folder.Threads, Path = folder.Path, Size = folder.Size});
             }
             Definitions.Add(copy);
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -313,7 +313,7 @@ namespace RoboSync
                 index = 0;
                 Definitions.Add(new Definition() { Label = "Default Definition" });
             }
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)) App.IsFastStart = true;
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions[index];
         }
 

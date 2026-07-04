@@ -40,7 +40,7 @@ namespace RoboSync
             App.IsMultipleInstances = Properties.Settings.Default.IsMultipleInstances;
 
             StartupData.Clear();
-            StartupData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift key to omit folder size calculations for other operations that load a definition", Flag = App.IsStartup });
+            StartupData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift or Escape key to omit folder size calculations for other operations that load a definition", Flag = App.IsStartup });
             StartupData.Add(new SettingData() { Label = "IsRun", Switch = "/R[-]", Description = "Run a full sync when started", Flag = App.IsRun });
             StartupData.Add(new SettingData() { Label = "IsStartup", Switch = "/S[-]", Description = "Start RoboSync when system starts", Flag = App.IsStartup });
             StartupData.Add(new SettingData() { Label = "IsMinimised", Switch = "/M[-]", Description = "Start the window minimised", Flag = App.IsMinimised });
