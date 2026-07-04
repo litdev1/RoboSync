@@ -1,4 +1,4 @@
-Backup sync program using Windows ROBOCOPY.  Designed to be free, open-source, simple and fast, in the mold of MS SyncToy (not generally now available), Perfect Backup, Cobian Reflector and others (increasingly hobbled free versions).
+Backup sync program using Windows ROBOCOPY.  Designed to be forever free, open-source (no hidden malware), simple and fast, in the mold of MS SyncToy (not generally now available), Perfect Backup, Cobian Reflector and others (increasingly hobbled free versions).
 
 Installer: https://github.com/litdev1/RoboSync/releases/download/Current/Setup.exe
 
