@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/commands.txt
+/folders.txt
+/user.config
+/RoboSync/Output/Setup.exe
