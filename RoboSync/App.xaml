@@ -162,9 +162,10 @@
         <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC"/>
         <LinearGradientBrush x:Key="ProgressColor" StartPoint="0 0" EndPoint="1 0">
             <GradientStop Color="#6688AA" Offset="0"/>
-            <GradientStop Color="#99BBDD" Offset="0.2"/>
-            <GradientStop Color="#BBDDFF" Offset="0.5"/>
-            <GradientStop Color="#99BBDD" Offset="0.8"/>
+            <GradientStop Color="#99BBDD" Offset="0.15"/>
+            <GradientStop Color="#BBDDFF" Offset="0.45"/>
+            <GradientStop Color="#BBDDFF" Offset="0.55"/>
+            <GradientStop Color="#99BBDD" Offset="0.85"/>
             <GradientStop Color="#6688AA" Offset="1"/>
         </LinearGradientBrush>
         <converters:SizeToRectConverter x:Key="SizeToRectConverter" />
