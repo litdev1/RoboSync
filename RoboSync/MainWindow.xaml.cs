@@ -22,8 +22,8 @@ namespace RoboSync
         private Timer timer;
         public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
         private Definition? SelectedDefinition = null;
-        private System.Windows.Shapes.Rectangle animationProgress;
-        private System.Windows.Shapes.Rectangle animationProgress2;
+        private System.Windows.Shapes.Rectangle animationRect;
+        private System.Windows.Shapes.Rectangle animationRect2;
 
         public MainWindow()
         {
@@ -112,9 +112,9 @@ namespace RoboSync
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Progress.ApplyTemplate();
-            animationProgress = (System.Windows.Shapes.Rectangle)Progress.Template.FindName("Animation", Progress);
+            animationRect = (System.Windows.Shapes.Rectangle)Progress.Template.FindName("Animation", Progress);
             Progress2.ApplyTemplate();
-            animationProgress2 = (System.Windows.Shapes.Rectangle)Progress2.Template.FindName("Animation", Progress2);
+            animationRect2 = (System.Windows.Shapes.Rectangle)Progress.Template.FindName("Animation", Progress2);
 
             timer = new Timer();
             timer.Elapsed += new ElapsedEventHandler(DoTimer);
@@ -161,12 +161,14 @@ namespace RoboSync
 
         private void SetAnimation(bool bVisible)
         {
-            if (animationProgress != null && animationProgress2 != null)
+            if (null == SelectedDefinition) return;
+            if (null != animationRect && null != animationRect2)
             {
-                animationProgress.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
-                animationProgress2.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
+                animationRect.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
+                animationRect2.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -493,12 +495,12 @@ namespace RoboSync
         private void OnOutputOpen(object sender, RoutedEventArgs e)
         {
             if (null == SelectedDefinition) return;
-            var dir = SelectedDefinition.Output;
-            if (Directory.Exists(dir))
+            var path = OutputTextBox.Text;
+            if (Directory.Exists(path))
             {
                 var runExplorer = new ProcessStartInfo();
                 runExplorer.FileName = "explorer.exe";
-                runExplorer.Arguments = dir;
+                runExplorer.Arguments = path;
                 Process.Start(runExplorer);
             }
         }
