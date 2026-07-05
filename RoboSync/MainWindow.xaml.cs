@@ -52,6 +52,7 @@ namespace RoboSync
                         FullSyncButton.IsEnabled = bReady;
                         AllSyncButton.IsEnabled = bReady;
                         AbortSyncButton.IsEnabled = !bReady;
+                        SetAnimation(!bReady);
                         break;
                     case "SelectedDefinition":
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
@@ -155,7 +156,6 @@ namespace RoboSync
             Dispatcher.Invoke(() =>
             {
                 CheckOutputLocation();
-                SetAnimation(syncViewModel.Status != 0);
             });
         }
 
@@ -339,19 +339,16 @@ namespace RoboSync
 
         private void Button_FullSyncClick(object sender, RoutedEventArgs e)
         {
-            SetAnimation(true);
             syncViewModel.DoSync();
         }
 
         private void Button_AllSyncClick(object sender, RoutedEventArgs e)
         {
-            SetAnimation(true);
             syncViewModel.DoSync(true);
         }
 
         private void Button_AbortSyncClick(object sender, RoutedEventArgs e)
         {
-            SetAnimation(false);
             syncViewModel.AbortSync();
         }
 

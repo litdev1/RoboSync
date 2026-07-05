@@ -74,7 +74,7 @@
             <ScrollViewer  Grid.Column="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel >
                     <Grid Margin="4" Height="56" >
-                        <Label Content="Output Folder" HorizontalAlignment="Left" Height="2a6" VerticalAlignment="Top"/>
+                        <Label Content="Output Folder" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top"/>
                         <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,55,0" TextChanged="OutputTextBox_TextChanged" Height="22" VerticalAlignment="Top"/>
                         <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,0" ToolTip="Browse to set the output location where copied files will be saved" Height="22" VerticalAlignment="Top"/>
                         <Button Content="Open" Width="50" HorizontalAlignment="Right" Click="OnOutputOpen" Margin="0,31,0,0" ToolTip="Open output folder in File Explorer" Height="22" VerticalAlignment="Top"/>
