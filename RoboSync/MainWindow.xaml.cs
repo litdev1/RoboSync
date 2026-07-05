@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Timer = System.Timers.Timer;
 
 namespace RoboSync
@@ -21,6 +22,8 @@ namespace RoboSync
         private Timer timer;
         public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
         private Definition? SelectedDefinition = null;
+        private System.Windows.Shapes.Rectangle animationProgress;
+        private System.Windows.Shapes.Rectangle animationProgress2;
 
         public MainWindow()
         {
@@ -108,6 +111,11 @@ namespace RoboSync
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Progress.ApplyTemplate();
+            animationProgress = (System.Windows.Shapes.Rectangle)Progress.Template.FindName("Animation", Progress);
+            Progress2.ApplyTemplate();
+            animationProgress2 = (System.Windows.Shapes.Rectangle)Progress2.Template.FindName("Animation", Progress2);
+
             timer = new Timer();
             timer.Elapsed += new ElapsedEventHandler(DoTimer);
             timer.Interval = 5000;
@@ -144,7 +152,20 @@ namespace RoboSync
 
         private void DoTimer(object? sender, ElapsedEventArgs e)
         {
-            CheckOutputLocation();
+            Dispatcher.Invoke(() =>
+            {
+                CheckOutputLocation();
+                SetAnimation(syncViewModel.Status != 0);
+            });
+        }
+
+        private void SetAnimation(bool bVisible)
+        {
+            if (animationProgress != null && animationProgress2 != null)
+            {
+                animationProgress.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
+                animationProgress2.Visibility = bVisible ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -176,7 +197,7 @@ namespace RoboSync
             OpenFolderDialog dialog = new();
             dialog.Multiselect = false;
             dialog.Title = "Select an output folder";
-            if (Directory.Exists(OutputTextBox.Text)) dialog.InitialDirectory = OutputTextBox.Text;
+            if (Directory.Exists(OutputTextBox.Text) && null != Directory.GetParent(OutputTextBox.Text)) dialog.InitialDirectory = Directory.GetParent(OutputTextBox.Text)?.ToString();
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
@@ -191,22 +212,19 @@ namespace RoboSync
 
         private void CheckOutputLocation()
         {
-            Dispatcher.Invoke(() =>
+            if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
+            SelectedDefinition.Output = OutputTextBox.Text;
+            var drive = SelectedDefinition.Output.ToUpper().Substring(0, 1);
+            var driveInfo = IsReadyDrive(drive);
+            if (drive == "C" || !driveInfo.Item1)
             {
-                if (null == SelectedDefinition || OutputTextBox.Text.Length < 1) return;
-                SelectedDefinition.Output = OutputTextBox.Text;
-                var drive = SelectedDefinition.Output.ToUpper().Substring(0, 1);
-                var driveInfo = IsReadyDrive(drive);
-                if (drive == "C" || !driveInfo.Item1)
-                {
-                    OutputTextBox.Foreground = new SolidColorBrush(Colors.Red);
-                }
-                else
-                {
-                    OutputTextBox.Foreground = Directory.Exists(OutputTextBox.Text) ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.Blue);
-                }
-                OutputInfoTextBox.Text = driveInfo.Item2;
-            });
+                OutputTextBox.Foreground = new SolidColorBrush(Colors.Red);
+            }
+            else
+            {
+                OutputTextBox.Foreground = Directory.Exists(OutputTextBox.Text) ? new SolidColorBrush(Colors.Black) : new SolidColorBrush(Colors.Blue);
+            }
+            OutputInfoTextBox.Text = driveInfo.Item2;
         }
 
         private Tuple<bool, string> IsReadyDrive(string driveLetter)
@@ -319,16 +337,19 @@ namespace RoboSync
 
         private void Button_FullSyncClick(object sender, RoutedEventArgs e)
         {
+            SetAnimation(true);
             syncViewModel.DoSync();
         }
 
         private void Button_AllSyncClick(object sender, RoutedEventArgs e)
         {
+            SetAnimation(true);
             syncViewModel.DoSync(true);
         }
 
         private void Button_AbortSyncClick(object sender, RoutedEventArgs e)
         {
+            SetAnimation(false);
             syncViewModel.AbortSync();
         }
 
@@ -467,6 +488,19 @@ namespace RoboSync
         {
             if (null == SelectedDefinition) return;
             SelectedDefinition.FileExclusions = FileExclusionsTextBox.Text;
+        }
+
+        private void OnOutputOpen(object sender, RoutedEventArgs e)
+        {
+            if (null == SelectedDefinition) return;
+            var dir = SelectedDefinition.Output;
+            if (Directory.Exists(dir))
+            {
+                var runExplorer = new ProcessStartInfo();
+                runExplorer.FileName = "explorer.exe";
+                runExplorer.Arguments = dir;
+                Process.Start(runExplorer);
+            }
         }
     }
 }

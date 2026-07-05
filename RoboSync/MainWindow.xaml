@@ -73,10 +73,11 @@
             <GridSplitter Width="5" VerticalContentAlignment="Stretch" Grid.Column="1" HorizontalAlignment="Center" Background="{StaticResource LightBrush}"/>
             <ScrollViewer  Grid.Column="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel >
-                    <Grid Margin="4" Height="50" >
-                        <Label Content="Output Folder" HorizontalAlignment="Left" Margin="0,0,0,4"/>
-                        <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,55,24" TextChanged="OutputTextBox_TextChanged"/>
-                        <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,24" ToolTip="Browse to set the output location where copied files will be saved"/>
+                    <Grid Margin="4" Height="56" >
+                        <Label Content="Output Folder" HorizontalAlignment="Left" Height="26" VerticalAlignment="Top"/>
+                        <TextBox x:Name="OutputTextBox" HorizontalContentAlignment="Stretch" Margin="89,4,55,0" TextChanged="OutputTextBox_TextChanged" Height="22" VerticalAlignment="Top"/>
+                        <Button Content="Browse" Width="50" HorizontalAlignment="Right" Click="OnOutputBrowse" Margin="0,4,0,0" ToolTip="Browse to set the output location where copied files will be saved" Height="22" VerticalAlignment="Top"/>
+                        <Button Content="Open" Width="50" HorizontalAlignment="Right" Click="OnOutputOpen" Margin="0,31,0,0" ToolTip="Open the output folder in File Explorer" Height="22" VerticalAlignment="Top"/>
                         <TextBlock x:Name="OutputInfoTextBox" Margin="89,31,0,-3" HorizontalAlignment="Left" Width="102"/>
                     </Grid>
                     <Border CornerRadius="5" Background="{StaticResource MouseOverBrush}" BorderBrush="Gray" Padding="12,4,12,4" Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Center" BorderThickness="1">
