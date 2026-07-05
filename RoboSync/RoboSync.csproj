@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <Content Include="RoboSync.ico" />
-    <Content Include="RoboSync.iss" />
   </ItemGroup>
 
   <ItemGroup>
