@@ -501,6 +501,12 @@ namespace RoboSync
                 Process.Start(runExplorer);
             }
         }
+
+        private void OnOutputRepair(object sender, RoutedEventArgs e)
+        {
+            if (null == SelectedDefinition) return;
+            syncViewModel.RepairDrive(SelectedDefinition.Output.First());
+        }
     }
 }
 

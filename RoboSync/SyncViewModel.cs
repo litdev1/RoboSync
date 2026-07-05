@@ -53,6 +53,7 @@ namespace RoboSync
         public string LogLine
         {
             get { return syncModel.LogLine; }
+            set { syncModel.LogLine = value; OnPropertyChanged(); }
         }
 
         public string ReadBytes
@@ -362,6 +363,16 @@ namespace RoboSync
         public void EndSync()
         {
             syncModel.EndSync();
+        }
+
+        public void RepairDrive(char drive)
+        {
+            Process process = new Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.FileName = "chkdsk";
+            process.StartInfo.Arguments = drive + ": /X /F";
+            process.Start();
+            process.WaitForExit();
         }
     }
 
