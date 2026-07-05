@@ -161,8 +161,8 @@
                     <TextBlock x:Name="TimeProgressTextBox" TextAlignment="Center" Margin="4" Text="{Binding ProgressTime}"/>
                 </Grid>
             </Border>
-            <ProgressBar x:Name="Progress2" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Foreground="#6688AA" Value="{Binding Progress2}"/>
-            <ProgressBar x:Name="Progress" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Foreground="#6688AA" Value="{Binding Progress1}"/>
+            <ProgressBar x:Name="Progress2" Style="{StaticResource ProgressBarStyle1}" Grid.Column="4" Margin="4,0,4,22" Height="14" VerticalAlignment="Bottom" ToolTip="Overall progress (input paths)" Value="{Binding Progress2}"/>
+            <ProgressBar x:Name="Progress" Style="{StaticResource ProgressBarStyle1}" Grid.Column="4" Margin="4,0,4,4" Height="14" VerticalAlignment="Bottom" ToolTip="Current folder progress, mainly for initial sync" Value="{Binding Progress1}"/>
         </Grid>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource LightBrush}"/>
         <Separator Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource LightBrush}"/>

@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Interop;
 
 namespace RoboSync
@@ -196,6 +198,37 @@ namespace RoboSync
                     }
                 }
             }
+        }
+    }
+
+    public class SizeToRectConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values == null || values.Length < 2)
+                return Rect.Empty;
+
+            if (values[0] is double width && values[1] is double height)
+            {
+                return new Rect(0, 0, width, height);
+            }
+
+            // Fallback if binding provides values as strings
+            try
+            {
+                double w = System.Convert.ToDouble(values[0], culture);
+                double h = System.Convert.ToDouble(values[1], culture);
+                return new Rect(0, 0, w, h);
+            }
+            catch
+            {
+                return Rect.Empty;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
         }
     }
 }
