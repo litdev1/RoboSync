@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Serialization;
 
 namespace RoboSync
@@ -218,7 +220,7 @@ namespace RoboSync
 
         private string Flags(Folder folder)
         {
-            string flags = "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0" + (folder.Details? " /NP" : " /NDL /NFL /NS /NC"); // "/M
+            string flags = "/MIR /J /XJ /MT:" + Math.Min(128, Math.Max(1, folder.Threads)) + " /R:0 /W:0 /NP" + (folder.Details? "" : " /NDL /NFL /NS /NC"); // "/M
             if (null != SelectedDefinition)
             {
                 var Xfolder = SelectedDefinition.FolderExclusions.Split([',', ';', '\n'], StringSplitOptions.RemoveEmptyEntries);
@@ -378,7 +380,18 @@ namespace RoboSync
 
     public class Folder
     {
-        public string Path { get; set; }
+        private string _Path;
+        public string Path {
+            get { return _Path; }
+            set
+            {
+                _Path = value;
+                if (!(App.IsFastStart || Keyboard.IsKeyDown(Key.Escape)))
+                {
+                    Size = Dir.GetSize(_Path) / 1024 / 1024;
+                }
+            } 
+        }
         public bool Include { get; set; }
         public bool Details { get; set; }
         public long Size { get; set; }

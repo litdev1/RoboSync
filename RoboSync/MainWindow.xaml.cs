@@ -18,6 +18,7 @@ namespace RoboSync
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static MainWindow Win;
         private SyncViewModel syncViewModel;
         private Timer timer;
         public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
@@ -27,6 +28,7 @@ namespace RoboSync
 
         public MainWindow()
         {
+            Win = this;
             PreInitialise();
             InitializeComponent();
         }
@@ -64,18 +66,14 @@ namespace RoboSync
                         FileExclusionsTextBox.Text = SelectedDefinition?.FileExclusions;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
+                        App.IsFastStart = false;
                         if (null == SelectedDefinition) return;
-                        if (App.IsFastStart)
-                        {
-                            App.IsFastStart = false;
-                            return;
-                        }
-                        Cursor = Cursors.Wait;
+                        //Force calculation and binding size calc
                         foreach (var folder in SelectedDefinition.Folders)
                         {
-                            folder.Size = Dir.GetSize(folder.Path) / 1024 / 1024;
+                            folder.Path = folder.Path;
+                            folder.Size = folder.Size;
                         }
-                        Cursor = null;
                         break;
                     case "LogLine":
                         LogTextBox.AppendText(syncViewModel.LogLine + Environment.NewLine);
@@ -91,6 +89,7 @@ namespace RoboSync
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            Cursor = Cursors.Wait;
             Properties.Settings.Default.Reload();
             if (Properties.Settings.Default.WinState > 0) WindowState = (WindowState)Properties.Settings.Default.WinState;
             if (Properties.Settings.Default.WinTop > 0) Top = Properties.Settings.Default.WinTop;
@@ -109,6 +108,7 @@ namespace RoboSync
             syncViewModel.Initialise();
             colDetails.Visibility = Properties.Settings.Default.ShowDetails ? Visibility.Visible : Visibility.Collapsed;
             colThreads.Visibility = Properties.Settings.Default.ShowThreads ? Visibility.Visible : Visibility.Collapsed;
+            Cursor = null;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -173,7 +173,7 @@ namespace RoboSync
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            if (App.IsStartup && !App.CanClose && !(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)))
+            if (App.IsStartup && !App.CanClose && !Keyboard.IsKeyDown(Key.Escape))
             {
                 e.Cancel = true;
                 App.CanClose = false;
@@ -277,7 +277,6 @@ namespace RoboSync
                     SelectedDefinition.Folders.Add(folder);
                 }
                 folder.Path = dialog.FolderName;
-                folder.Size = Dir.GetSize(folder.Path) / 1024 / 1024;
             }
             FoldersDataGrid.ItemsSource = null;
             FoldersDataGrid.ItemsSource = SelectedDefinition.Folders;
@@ -287,7 +286,6 @@ namespace RoboSync
         {
             Cursor = Cursors.Wait;
             DataGrid dataGrid = (DataGrid)sender;
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = (Definition)dataGrid.SelectedItem;
             Cursor = null;
         }
@@ -301,7 +299,6 @@ namespace RoboSync
         private void Button_AddClick(object sender, RoutedEventArgs e)
         {
             Definitions.Add(new Definition() { Label = "Definition" + (Definitions.Count + 1) });
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -320,7 +317,6 @@ namespace RoboSync
                 copy.Folders.Add(new Folder() { Include = folder.Include, Details = folder.Details, Threads = folder.Threads, Path = folder.Path, Size = folder.Size});
             }
             Definitions.Add(copy);
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions.Last();
         }
 
@@ -334,7 +330,6 @@ namespace RoboSync
                 index = 0;
                 Definitions.Add(new Definition() { Label = "Default Definition" });
             }
-            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift) || Keyboard.IsKeyDown(Key.Escape)) App.IsFastStart = true;
             syncViewModel.SelectedDefinition = Definitions[index];
         }
 
@@ -400,7 +395,7 @@ namespace RoboSync
 
         private void Button_SettingsClick(object sender, RoutedEventArgs e)
         {
-            Settings settings = new Settings(this);
+            Settings settings = new Settings();
             settings.ShowDialog();
         }
 

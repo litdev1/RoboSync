@@ -120,7 +120,13 @@
                             <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="Auto"/>
                             <DataGridCheckBoxColumn x:Name="colDetails" Header="Details" Binding="{Binding Details, Mode=TwoWay}" Width="Auto" Visibility="Collapsed"/>
                             <DataGridTextColumn x:Name="colThreads" Header="Threads" Binding="{Binding Threads, Mode=TwoWay}" Width="Auto" Visibility="Collapsed"/>
-                            <DataGridTextColumn Header="Input Folder" Binding="{Binding Path, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Input Folder" Binding="{Binding Path, Mode=TwoWay}" Width="*">
+                                <!--<DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="{Binding Path, Converter={StaticResource FolderColorConverter}}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>-->
+                            </DataGridTextColumn>
                             <DataGridTextColumn Header="Size (MB)" Binding="{Binding Size, Mode=TwoWay}" Width="Auto" IsReadOnly="True">
                             </DataGridTextColumn>
                             <DataGridTemplateColumn Header="Browse">

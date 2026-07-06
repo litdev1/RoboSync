@@ -248,7 +248,6 @@ namespace RoboSync
                 ProgressTime = command.Item1 + "\n" +
                     hour.ToString("00") + ":" + (min % 60).ToString("00") + ":" + (sec % 60).ToString("00") + " (H:M:S)\n" +
                     hourT.ToString("00") + ":" + (minT % 60).ToString("00") + ":" + (secT % 60).ToString("00") + " (Total)";
-                outSize = Dir.GetSize(command.Item2);
 
                 // avoid divide-by-zero if inSize is 0
                 outSize = rates.Item4 * 1024 * 1024;

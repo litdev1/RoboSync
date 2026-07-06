@@ -21,11 +21,9 @@ namespace RoboSync
     {
         public ObservableCollection<SettingData> StartupData = new ObservableCollection<SettingData>();
         public ObservableCollection<SettingData> FolderData = new ObservableCollection<SettingData>();
-        private MainWindow mainWindow;
 
-        public Settings(MainWindow _mainWindow)
+        public Settings()
         {
-            mainWindow = _mainWindow;
             InitializeComponent();
         }
 
@@ -40,7 +38,7 @@ namespace RoboSync
             App.IsMultipleInstances = Properties.Settings.Default.IsMultipleInstances;
 
             StartupData.Clear();
-            StartupData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nUse Shift or Escape key to omit folder size calculations for other operations that load a definition", Flag = App.IsStartup });
+            StartupData.Add(new SettingData() { Label = "IsFastStart", Switch = "/F[-]", Description = "Fast startup - omit initial folder size calculations\nHold Escape key down to omit folder size calculations for other operations that load a definition", Flag = App.IsStartup });
             StartupData.Add(new SettingData() { Label = "IsRun", Switch = "/R[-]", Description = "Run a full sync when started", Flag = App.IsRun });
             StartupData.Add(new SettingData() { Label = "IsStartup", Switch = "/S[-]", Description = "Start RoboSync when system starts", Flag = App.IsStartup });
             StartupData.Add(new SettingData() { Label = "IsMinimised", Switch = "/M[-]", Description = "Start the window minimised", Flag = App.IsMinimised });
@@ -74,8 +72,8 @@ namespace RoboSync
 
             Properties.Settings.Default.ShowDetails = FolderData[0].Flag;
             Properties.Settings.Default.ShowThreads = FolderData[1].Flag;
-            mainWindow.colDetails.Visibility = Properties.Settings.Default.ShowDetails ? Visibility.Visible : Visibility.Collapsed;
-            mainWindow.colThreads.Visibility = Properties.Settings.Default.ShowThreads ? Visibility.Visible : Visibility.Collapsed;
+            MainWindow.Win.colDetails.Visibility = Properties.Settings.Default.ShowDetails ? Visibility.Visible : Visibility.Collapsed;
+            MainWindow.Win.colThreads.Visibility = Properties.Settings.Default.ShowThreads ? Visibility.Visible : Visibility.Collapsed;
 
             Properties.Settings.Default.Save();
         }

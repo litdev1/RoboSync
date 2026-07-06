@@ -74,6 +74,7 @@ namespace RoboSync
             }
             catch (Exception)
             {
+                size = 0;
             }
             return size;
         }
@@ -228,4 +229,19 @@ namespace RoboSync
             throw new NotSupportedException();
         }
     }
+
+    //public class FolderColorConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    //    {
+    //        string path = (string)value;
+    //        return new SolidColorBrush(Directory.Exists(path) ? Colors.Black : Colors.Red);
+    //    }
+
+    //    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    //    {
+    //        throw new NotSupportedException();
+    //    }
+    //}
+
 }
