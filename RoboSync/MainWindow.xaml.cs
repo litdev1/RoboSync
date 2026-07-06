@@ -19,9 +19,11 @@ namespace RoboSync
     public partial class MainWindow : Window
     {
         public static MainWindow Win;
+        public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
+        public bool UpdateFolder = false;
+
         private SyncViewModel syncViewModel;
         private Timer timer;
-        public ObservableCollection<Definition> Definitions = new ObservableCollection<Definition>();
         private Definition? SelectedDefinition = null;
         private System.Windows.Shapes.Rectangle animationRect;
         private System.Windows.Shapes.Rectangle animationRect2;
@@ -31,6 +33,11 @@ namespace RoboSync
             Win = this;
             PreInitialise();
             InitializeComponent();
+        }
+
+        public SyncViewModel SyncViewModel
+        {
+            get { return syncViewModel; }
         }
 
         private void PreInitialise()
@@ -89,7 +96,6 @@ namespace RoboSync
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            Cursor = Cursors.Wait;
             Properties.Settings.Default.Reload();
             if (Properties.Settings.Default.WinState > 0) WindowState = (WindowState)Properties.Settings.Default.WinState;
             if (Properties.Settings.Default.WinTop > 0) Top = Properties.Settings.Default.WinTop;
@@ -108,7 +114,6 @@ namespace RoboSync
             syncViewModel.Initialise();
             colDetails.Visibility = Properties.Settings.Default.ShowDetails ? Visibility.Visible : Visibility.Collapsed;
             colThreads.Visibility = Properties.Settings.Default.ShowThreads ? Visibility.Visible : Visibility.Collapsed;
-            Cursor = null;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -157,6 +162,14 @@ namespace RoboSync
             Dispatcher.Invoke(() =>
             {
                 CheckOutputLocation();
+                if (UpdateFolder)
+                {
+                    Cursor = Cursors.Wait;
+                    FoldersDataGrid.ItemsSource = null;
+                    FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
+                    Cursor = null;
+                    UpdateFolder = false;
+                }
             });
         }
 
@@ -284,10 +297,8 @@ namespace RoboSync
 
         private void DefinitionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Cursor = Cursors.Wait;
             DataGrid dataGrid = (DataGrid)sender;
             syncViewModel.SelectedDefinition = (Definition)dataGrid.SelectedItem;
-            Cursor = null;
         }
 
         private void DefinitionsDataGrid_LostFocus(object sender, RoutedEventArgs e)

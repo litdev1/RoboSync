@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 
 namespace RoboSync
@@ -388,7 +389,14 @@ namespace RoboSync
                 _Path = value;
                 if (!(App.IsFastStart || Keyboard.IsKeyDown(Key.Escape)))
                 {
+                    var lastSize = Size;
+                    MainWindow.Win.Cursor = Cursors.Wait;
                     Size = Dir.GetSize(_Path) / 1024 / 1024;
+                    MainWindow.Win.Cursor = null;
+                    if (lastSize != Size)
+                    {
+                        MainWindow.Win.UpdateFolder = true;
+                    }
                 }
             } 
         }
