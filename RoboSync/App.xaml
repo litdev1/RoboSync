@@ -169,6 +169,7 @@
             <GradientStop Color="#6688AA" Offset="1"/>
         </LinearGradientBrush>
         <converters:SizeToRectConverter x:Key="SizeToRectConverter" />
+        <converters:PathToBrushConverter x:Key="PathToBrushConverter"/>
         
         <Style x:Key="ProgressBarStyle1" TargetType="{x:Type ProgressBar}">
             <Setter Property="Foreground" Value="#6688AA"/>

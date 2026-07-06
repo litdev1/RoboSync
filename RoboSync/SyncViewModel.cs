@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -367,6 +366,7 @@ namespace RoboSync
 
         public void RepairDrive(char drive)
         {
+            if (drive == 'C') return;
             Process process = new Process();
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.FileName = "chkdsk";

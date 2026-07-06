@@ -188,7 +188,7 @@ namespace RoboSync
             Properties.Settings.Default.WinWidth = Width;
             Properties.Settings.Default.WinHeight = Height;
             Properties.Settings.Default.Version = syncViewModel.Version?.ToString();
-            syncViewModel.SaveDefinitions();
+            if (!Keyboard.IsKeyDown(Key.Space)) syncViewModel.SaveDefinitions();
             Properties.Settings.Default.Save();
 
             syncViewModel.EndSync();
