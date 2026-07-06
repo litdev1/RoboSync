@@ -64,7 +64,8 @@ namespace RoboSync
                         FileExclusionsTextBox.Text = SelectedDefinition?.FileExclusions;
                         FoldersDataGrid.ItemsSource = null;
                         FoldersDataGrid.ItemsSource = SelectedDefinition?.Folders;
-                        if (null == SelectedDefinition || App.IsFastStart)
+                        if (null == SelectedDefinition) return;
+                        if (App.IsFastStart)
                         {
                             App.IsFastStart = false;
                             return;
