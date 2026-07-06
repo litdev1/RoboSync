@@ -4,4 +4,4 @@ Installer: https://github.com/litdev1/RoboSync/releases/download/Current/Setup.e
 
 Installer may request .Net runtime to also be installed.
 
-<img width="2080" height="1390" alt="image" src="https://github.com/user-attachments/assets/03b5877a-f9e7-44d8-9a56-fdf141e29c1b" />
+<img width="2080" height="1390" alt="image" src="https://github.com/user-attachments/assets/ef889644-c618-4b97-8a48-ae4924ab21e2" />
