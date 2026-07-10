@@ -15,6 +15,7 @@ namespace RoboSync
         private double inSize = 0;
         private double outSize = 0;
         private long numError = 0;
+        private long numFiles = 0;
         private string estimate = "";
         private DateTime startTime = DateTime.Now;
         private TimeSpan totalTime = TimeSpan.Zero;
@@ -111,6 +112,7 @@ namespace RoboSync
             if (null == sender) return;
             int i = 0;
             numError = 0;
+            numFiles = 0;
             foreach (var _command in commands)
             {
                 command = _command;
@@ -183,7 +185,20 @@ namespace RoboSync
                 {
                     if (!string.IsNullOrEmpty(e.Data))
                     {
-                        if (e.Data.StartsWith("ERROR")) numError++;
+                        if (e.Data.StartsWith("ERROR"))
+                        {
+                            numError++;
+                        }
+                        else
+                        {
+                            string[] words = e.Data.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            if (words.Length >= 4 &&  words[0] == "Files")
+                            {
+                                int iFiles = 0;
+                                int.TryParse(words[3], out iFiles);
+                                numFiles += iFiles;
+                            }
+                        }
                         LogLine = e.Data;
                     }
                 };
@@ -198,11 +213,11 @@ namespace RoboSync
             command = null;
             if (worker.CancellationPending)
             {
-                LogLine = Environment.NewLine + "INFO : Aborted with a total of " + numError + " errors detected";
+                LogLine = Environment.NewLine + "INFO : Aborted with a total of " + numError + " errors detected, " + numFiles + " files copied";
             }
             else
             {
-                LogLine = Environment.NewLine + "INFO : Completed with a total of " + numError + " errors detected";
+                LogLine = Environment.NewLine + "INFO : Completed with a total of " + numError + " errors detected, " + numFiles + " files copied";
                 Progress1 = 100;
                 Progress2 = (int)(100 * (i / (double)commands.Count));
             }
