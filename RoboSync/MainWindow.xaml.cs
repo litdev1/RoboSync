@@ -76,11 +76,14 @@ namespace RoboSync
                         App.IsFastStart = false;
                         if (null == SelectedDefinition) return;
                         //Force calculation and binding size calc
+                        long totalSize = 0;
                         foreach (var folder in SelectedDefinition.Folders)
                         {
                             folder.Path = folder.Path;
                             folder.Size = folder.Size;
+                            totalSize += folder.Size;
                         }
+                        DefinitionLabel.Text += " (" + totalSize + " MB)";
                         break;
                     case "LogLine":
                         LogTextBox.AppendText(syncViewModel.LogLine + Environment.NewLine);
@@ -305,6 +308,12 @@ namespace RoboSync
         {
             DataGrid dataGrid = (DataGrid)sender;
             DefinitionLabel.Text = ((Definition)dataGrid.SelectedItem).Label;
+            long totalSize = 0;
+            foreach (var folder in ((Definition)dataGrid.SelectedItem).Folders)
+            {
+                totalSize += folder.Size;
+            }
+            DefinitionLabel.Text += " (" + totalSize + " MB)";
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)
