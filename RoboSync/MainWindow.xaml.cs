@@ -67,7 +67,6 @@ namespace RoboSync
                         if (SelectedDefinition == syncViewModel.SelectedDefinition) return;
                         SelectedDefinition = syncViewModel.SelectedDefinition;
                         DefinitionsDataGrid.SelectedItem = SelectedDefinition;
-                        DefinitionLabel.Text = SelectedDefinition?.Label;
                         OutputTextBox.Text = SelectedDefinition?.Output;
                         FolderExclusionsTextBox.Text = SelectedDefinition?.FolderExclusions;
                         FileExclusionsTextBox.Text = SelectedDefinition?.FileExclusions;
@@ -76,14 +75,12 @@ namespace RoboSync
                         App.IsFastStart = false;
                         if (null == SelectedDefinition) return;
                         //Force calculation and binding size calc
-                        long totalSize = 0;
                         foreach (var folder in SelectedDefinition.Folders)
                         {
                             folder.Path = folder.Path;
                             folder.Size = folder.Size;
-                            totalSize += folder.Size;
                         }
-                        DefinitionLabel.Text += " (" + totalSize + " MB)";
+                        UpdateDefinitionLabel();
                         break;
                     case "LogLine":
                         LogTextBox.AppendText(syncViewModel.LogLine + Environment.NewLine);
@@ -95,6 +92,18 @@ namespace RoboSync
                         break;
                 }
             });
+        }
+
+        private void UpdateDefinitionLabel()
+        {
+            if (SelectedDefinition == null) return;
+            DefinitionLabel.Text = SelectedDefinition?.Label;
+            long totalSize = 0;
+            foreach (var folder in SelectedDefinition.Folders)
+            {
+                totalSize += folder.Size;
+            }
+            DefinitionLabel.Text += " (" + totalSize + " MB)";
         }
 
         private void Window_Initialized(object sender, EventArgs e)
@@ -296,14 +305,7 @@ namespace RoboSync
             }
             FoldersDataGrid.ItemsSource = null;
             FoldersDataGrid.ItemsSource = SelectedDefinition.Folders;
-
-            DefinitionLabel.Text = SelectedDefinition.Label;
-            long totalSize = 0;
-            foreach (var _folder in SelectedDefinition.Folders)
-            {
-                totalSize += _folder.Size;
-            }
-            DefinitionLabel.Text += " (" + totalSize + " MB)";
+            UpdateDefinitionLabel();
         }
 
         private void DefinitionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -315,13 +317,7 @@ namespace RoboSync
         private void DefinitionsDataGrid_LostFocus(object sender, RoutedEventArgs e)
         {
             DataGrid dataGrid = (DataGrid)sender;
-            DefinitionLabel.Text = ((Definition)dataGrid.SelectedItem).Label;
-            long totalSize = 0;
-            foreach (var folder in ((Definition)dataGrid.SelectedItem).Folders)
-            {
-                totalSize += folder.Size;
-            }
-            DefinitionLabel.Text += " (" + totalSize + " MB)";
+            UpdateDefinitionLabel();
         }
 
         private void Button_AddClick(object sender, RoutedEventArgs e)
@@ -530,6 +526,11 @@ namespace RoboSync
         {
             if (null == SelectedDefinition) return;
             syncViewModel.RepairDrive(SelectedDefinition.Output.First());
+        }
+
+        private void FoldersDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateDefinitionLabel();
         }
     }
 }

@@ -85,7 +85,7 @@
                         <TextBlock x:Name="DefinitionLabel" Foreground="White" HorizontalAlignment="Center"/>
                     </Border>
                     <DataGrid x:Name="FoldersDataGrid" AutoGenerateColumns="False" CanUserAddRows="True" HeadersVisibility="Column" CanUserReorderColumns="False" CanUserSortColumns="False"
-                    Margin="4">
+                    Margin="4" SelectionChanged="FoldersDataGrid_SelectionChanged">
                         <DataGrid.CommandBindings>
                             <CommandBinding Command="{x:Static ApplicationCommands.Paste}" CanExecute="CanPaste" Executed="Paste"/>
                             <CommandBinding Command="{x:Static ApplicationCommands.Copy}" CanExecute="CanCopy" Executed="Copy"/>
