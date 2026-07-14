@@ -296,6 +296,14 @@ namespace RoboSync
             }
             FoldersDataGrid.ItemsSource = null;
             FoldersDataGrid.ItemsSource = SelectedDefinition.Folders;
+
+            DefinitionLabel.Text = SelectedDefinition.Label;
+            long totalSize = 0;
+            foreach (var _folder in SelectedDefinition.Folders)
+            {
+                totalSize += _folder.Size;
+            }
+            DefinitionLabel.Text += " (" + totalSize + " MB)";
         }
 
         private void DefinitionsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
