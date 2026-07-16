@@ -128,7 +128,7 @@ namespace RoboSync
                 "Progress calculations are approximate to keep performance optimal\n" +
                 "ROBOCOPY commands may be exported to Desktop/RoboSync.bat for use directly\n" +
                 "Recommend closing other applications first - locked files are not copied\n" +
-                "Definitions may be scheduled (Tack Scheduler) to be synced daily or weekly\n" +
+                "Definitions may be scheduled (Task Scheduler) to be synced daily or weekly\n" +
                 "RoboSync does not need to be running to perform scheduled sync backups\n";
 
             var saveVersion = Version;
